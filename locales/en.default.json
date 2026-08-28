@@ -1,0 +1,14 @@
+{
+  "accessibility": {
+    "skip_to_content": "Skip to content"
+  },
+  "gift_cards": {
+    "issued": {
+      "title": "{{ value }} gift card for {{ shop }}",
+      "remaining_html": "{{ balance }} left",
+      "expired": "Expired",
+      "expires_on_html": "Expires {{ expires_on }}",
+      "shop_link": "Continue shopping"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+root: .
+extends: theme-check:recommended
+
+# These snippets are Phase 1 architectural placeholders. They are wired up
+# by the sections/pages built in later phases (2, 3 and 5) and are not
+# dead code.
+OrphanedSnippet:
+  ignore:
+    - snippets/button.liquid
+    - snippets/icon.liquid
+    - snippets/price.liquid
+    - snippets/product-card.liquid
+    - snippets/product-media.liquid
+    - snippets/responsive-image.liquid
