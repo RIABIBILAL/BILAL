@@ -1,9 +1,30 @@
 {% comment %}
   Snippet: responsive-image
   Renders a responsive, lazy-loaded <img> using Shopify's image_url/srcset.
-  Full implementation lands alongside the sections that consume it.
 
   Accepts:
   - image: {Object} Shopify image object (required)
-  - sizes: {String} sizes attribute (optional)
+  - sizes: {String} sizes attribute (optional, default "100vw")
+  - widths: {String} comma-separated srcset widths (optional)
+  - class: {String} classes to apply to the <img> (optional)
+  - loading: {String} "lazy" | "eager" (optional, default "lazy")
+  - alt: {String} alt text override (optional, defaults to image.alt)
 {% endcomment %}
+{%- liquid
+  assign img_alt = alt | default: image.alt | default: ''
+  assign img_widths = widths | default: '375,550,750,1100,1500,1780,2000'
+  assign img_sizes = sizes | default: '100vw'
+  assign img_loading = loading | default: 'lazy'
+-%}
+{%- if image -%}
+  {{
+    image
+    | image_url: width: 3200
+    | image_tag:
+      loading: img_loading,
+      alt: img_alt,
+      class: class,
+      widths: img_widths,
+      sizes: img_sizes
+  }}
+{%- endif -%}

@@ -13,6 +13,16 @@
   class="site-header{% if is_transparent %} site-header--transparent{% endif %}"
   data-header
 >
+  {%- if section.settings.announcement_text != blank -%}
+    <div class="site-header__announcement">
+      {%- if section.settings.announcement_link != blank -%}
+        <a href="{{ section.settings.announcement_link }}" class="site-header__announcement-link">{{ section.settings.announcement_text }}</a>
+      {%- else -%}
+        <p class="site-header__announcement-text">{{ section.settings.announcement_text }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
   <div class="site-header__inner container">
     <button
       type="button"
@@ -142,6 +152,24 @@
     background-color: transparent;
     border-bottom-color: transparent;
     color: var(--zinara-ivory);
+  }
+
+  .site-header__announcement {
+    padding: var(--zinara-space-2xs) var(--zinara-space-md);
+    background-color: var(--zinara-charcoal);
+    color: var(--zinara-ivory);
+    text-align: center;
+    font-size: var(--zinara-text-xs);
+    letter-spacing: var(--zinara-tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .site-header__announcement-text {
+    margin: 0;
+  }
+
+  .site-header__announcement-link {
+    display: block;
   }
 
   .site-header__inner {
@@ -369,6 +397,17 @@
       "label": "Transparent on homepage",
       "info": "Overlays the header on the homepage until the visitor scrolls.",
       "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "info": "Leave blank to hide the announcement bar."
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
     }
   ]
 }

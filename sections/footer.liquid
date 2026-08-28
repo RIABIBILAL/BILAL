@@ -25,22 +25,22 @@
 
         {%- form 'customer', id: 'FooterNewsletterForm', class: 'site-footer__newsletter-form' -%}
           <input type="hidden" name="contact[tags]" value="newsletter">
-          <label class="visually-hidden" for="FooterNewsletterEmail">{{ 'footer.newsletter.email_label' | t }}</label>
+          <label class="visually-hidden" for="FooterNewsletterEmail">{{ 'newsletter.email_label' | t }}</label>
           <input
             type="email"
             name="contact[email]"
             id="FooterNewsletterEmail"
             class="site-footer__newsletter-input"
-            placeholder="{{ 'footer.newsletter.email_placeholder' | t }}"
+            placeholder="{{ 'newsletter.email_placeholder' | t }}"
             autocomplete="email"
             required
             {%- if form.errors %} aria-invalid="true"{% endif %}
           >
-          {%- assign newsletter_submit_label = 'footer.newsletter.submit' | t -%}
+          {%- assign newsletter_submit_label = 'newsletter.submit' | t -%}
           {%- render 'button', label: newsletter_submit_label, type: 'submit', class: 'site-footer__newsletter-submit' -%}
 
           {%- if form.posted_successfully? -%}
-            <p class="site-footer__newsletter-message" role="status">{{ 'footer.newsletter.success' | t }}</p>
+            <p class="site-footer__newsletter-message" role="status">{{ 'newsletter.success' | t }}</p>
           {%- elsif form.errors -%}
             <p class="site-footer__newsletter-message site-footer__newsletter-message--error" role="alert">
               {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}

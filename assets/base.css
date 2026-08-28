@@ -282,7 +282,106 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   7. Accessibility
+   7. Product card & price
+   Shared by the homepage featured-collection section (Phase 4) and the
+   collection page (Phase 5) — lives here, not in a section stylesheet,
+   because both consume it.
+   -------------------------------------------------------------------------- */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zinara-space-2xs);
+}
+
+.product-card__media-link {
+  display: block;
+}
+
+.product-card__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background-color: var(--zinara-sand);
+}
+
+.product-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    opacity var(--zinara-duration-base) var(--zinara-ease),
+    transform var(--zinara-duration-base) var(--zinara-ease);
+}
+
+.product-card__image--hover {
+  opacity: 0;
+}
+
+.product-card:hover .product-card__image--primary,
+.product-card:focus-within .product-card__image--primary {
+  opacity: 0;
+}
+
+.product-card:hover .product-card__image--hover,
+.product-card:focus-within .product-card__image--hover {
+  opacity: 1;
+}
+
+.product-card:hover .product-card__image,
+.product-card:focus-within .product-card__image {
+  transform: scale(1.03);
+}
+
+.product-card__badge {
+  position: absolute;
+  top: var(--zinara-space-xs);
+  left: var(--zinara-space-xs);
+  padding: var(--zinara-space-3xs) var(--zinara-space-xs);
+  background-color: var(--zinara-charcoal);
+  color: var(--zinara-ivory);
+  font-size: var(--zinara-text-xs);
+  letter-spacing: var(--zinara-tracking-wide);
+  text-transform: uppercase;
+}
+
+.product-card__title {
+  margin: 0;
+  font-size: var(--zinara-text-sm);
+  font-weight: 500;
+}
+
+.product-card__title a:hover,
+.product-card__title a:focus-visible {
+  color: var(--zinara-gold-dark);
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--zinara-space-2xs);
+  font-size: var(--zinara-text-sm);
+}
+
+.price__regular,
+.price__sale {
+  color: var(--zinara-charcoal);
+}
+
+.price__sale {
+  font-weight: 600;
+}
+
+.price__compare {
+  color: var(--zinara-charcoal);
+  opacity: 0.55;
+  font-size: var(--zinara-text-xs);
+  text-decoration: line-through;
+}
+
+/* --------------------------------------------------------------------------
+   8. Accessibility
    -------------------------------------------------------------------------- */
 
 /* Visible, high-contrast focus ring on every interactive element, without
@@ -352,7 +451,7 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   8. Phase 1 section placeholders (development only)
+   9. Phase 1 section placeholders (development only)
    Removed section-by-section as later phases replace each placeholder
    with its real implementation.
    -------------------------------------------------------------------------- */

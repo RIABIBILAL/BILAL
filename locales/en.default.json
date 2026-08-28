@@ -23,12 +23,25 @@
     "navigation": "Footer navigation",
     "social": "Social media",
     "payment_methods": "Payment methods",
-    "rights_reserved": "All rights reserved.",
-    "newsletter": {
-      "email_label": "Email address",
-      "email_placeholder": "Your email",
-      "submit": "Sign up",
-      "success": "Thank you for subscribing."
+    "rights_reserved": "All rights reserved."
+  },
+  "newsletter": {
+    "email_label": "Email address",
+    "email_placeholder": "Your email",
+    "submit": "Sign up",
+    "success": "Thank you for subscribing."
+  },
+  "products": {
+    "product": {
+      "on_sale": "Sale",
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price"
+      }
     }
+  },
+  "onboarding": {
+    "product_title": "Product title",
+    "collection_title": "Collection"
   }
 }
