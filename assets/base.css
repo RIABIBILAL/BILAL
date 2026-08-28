@@ -380,6 +380,38 @@ p {
   text-decoration: line-through;
 }
 
+/* Pagination — shared by the collection, search and blog pages. */
+.pagination__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--zinara-space-2xs);
+  margin: var(--zinara-space-lg) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagination__link,
+.pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding-inline: var(--zinara-space-2xs);
+  font-size: var(--zinara-text-sm);
+}
+
+.pagination__link--current {
+  border: var(--zinara-border-width) solid var(--zinara-charcoal);
+  border-radius: var(--zinara-radius-sm);
+}
+
+.pagination__link:hover,
+.pagination__link:focus-visible {
+  color: var(--zinara-gold-dark);
+}
+
 /* --------------------------------------------------------------------------
    8. Accessibility
    -------------------------------------------------------------------------- */

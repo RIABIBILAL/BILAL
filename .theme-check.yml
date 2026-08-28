@@ -1,8 +1,2 @@
 root: .
 extends: theme-check:recommended
-
-# Phase 1 architectural placeholder, still unwired until the product page
-# built in Phase 5 consumes it. Not dead code.
-OrphanedSnippet:
-  ignore:
-    - snippets/product-media.liquid

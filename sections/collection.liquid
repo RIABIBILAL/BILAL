@@ -1,15 +1,87 @@
-{% comment %}
-  Section: Collection
-  ZINARA JEWELRY — architectural placeholder (Phase 1).
-  Full collection grid build lands in Phase 5.
-{% endcomment %}
-<div class="section-placeholder section-placeholder--collection">
-  <p class="section-placeholder__label">Collection section</p>
-</div>
+<section class="collection">
+  <div class="collection__header container">
+    <h1 class="collection__title">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="collection__description">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+
+  <div class="collection__inner container">
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="collection__grid">
+          {%- for product in collection.products -%}
+            {%- render 'product-card', card_product: product -%}
+          {%- endfor -%}
+        </div>
+        {%- render 'pagination', paginate: paginate -%}
+      {%- else -%}
+        <p class="collection__empty">{{ 'collection.empty' | t }}</p>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .collection {
+    padding-block: var(--zinara-space-2xl);
+  }
+
+  .collection__header {
+    margin-bottom: var(--zinara-space-lg);
+    text-align: center;
+  }
+
+  .collection__description {
+    max-width: 40rem;
+    margin-inline: auto;
+    color: var(--zinara-charcoal);
+    line-height: var(--zinara-leading-relaxed);
+  }
+
+  .collection__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--zinara-space-md);
+  }
+
+  .collection__empty {
+    text-align: center;
+  }
+
+  @media (min-width: 750px) {
+    .collection__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .collection__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--zinara-space-lg);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .collection__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "Collection",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 16
+    }
+  ]
 }
 {% endschema %}

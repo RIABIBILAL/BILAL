@@ -1,6 +1,8 @@
 /**
  * ZINARA JEWELRY — theme JavaScript
  * Phase 3: header scroll state and the mobile menu disclosure.
+ * Phase 5: product page variant picker and media thumbnails.
+ * Cart, search and content pages are fully native (no JS required).
  * Cinematic effects are added in a later phase — always respecting
  * prefers-reduced-motion.
  */
@@ -82,8 +84,126 @@
     });
   }
 
+  /**
+   * Product media: clicking a thumbnail swaps the active main media item.
+   * Progressive enhancement — the thumbnails are ordinary buttons that
+   * still make sense without this (all media items are simply listed).
+   */
+  function initProductThumbnails() {
+    var thumbnails = document.querySelectorAll('[data-thumbnail]');
+    thumbnails.forEach(function (thumbnail) {
+      thumbnail.addEventListener('click', function () {
+        var root = thumbnail.closest('.product');
+        if (!root) return;
+        var mediaId = thumbnail.getAttribute('data-media-id');
+
+        root.querySelectorAll('[data-thumbnail]').forEach(function (t) {
+          var isActive = t === thumbnail;
+          t.classList.toggle('is-active', isActive);
+          t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        root.querySelectorAll('.product__media-item').forEach(function (item) {
+          var matches = item.getAttribute('data-media-id') === mediaId;
+          item.hidden = !matches;
+          item.classList.toggle('is-active', matches);
+        });
+      });
+    });
+  }
+
+  /**
+   * Product form: keeps the hidden variant id, price, add-to-cart state
+   * and active media in sync with the option selects, without a page
+   * reload. Falls back gracefully — the form still works as a plain
+   * native submit if this never runs (e.g. JS disabled).
+   */
+  function initProductForm() {
+    var forms = document.querySelectorAll('.product__form');
+    forms.forEach(function (form) {
+      var root = form.closest('.product');
+      if (!root) return;
+
+      var jsonEl = root.querySelector('[data-product-json]');
+      if (!jsonEl) return;
+
+      var variants;
+      try {
+        variants = JSON.parse(jsonEl.textContent);
+      } catch (error) {
+        return;
+      }
+
+      var optionSelects = form.querySelectorAll('[data-product-option]');
+      if (!optionSelects.length) return;
+
+      var variantIdInput = form.querySelector('[data-product-variant-id]');
+      var addToCartButton = form.querySelector('[data-add-to-cart]');
+      var addToCartText = form.querySelector('[data-add-to-cart-text]');
+
+      function findMatchingVariant() {
+        var selected = Array.prototype.map.call(optionSelects, function (select) {
+          return select.value;
+        });
+        return variants.filter(function (variant) {
+          return variant.options.every(function (value, index) {
+            return value === selected[index];
+          });
+        })[0];
+      }
+
+      function updateMedia(variant) {
+        if (!variant || !variant.featured_media) return;
+        var mediaId = String(variant.featured_media.id);
+
+        root.querySelectorAll('[data-thumbnail]').forEach(function (t) {
+          var matches = t.getAttribute('data-media-id') === mediaId;
+          t.classList.toggle('is-active', matches);
+          t.setAttribute('aria-selected', matches ? 'true' : 'false');
+        });
+
+        root.querySelectorAll('.product__media-item').forEach(function (item) {
+          var matches = item.getAttribute('data-media-id') === mediaId;
+          item.hidden = !matches;
+          item.classList.toggle('is-active', matches);
+        });
+      }
+
+      function updateForm() {
+        var variant = findMatchingVariant();
+        if (!variant) return;
+
+        if (variantIdInput) variantIdInput.value = variant.id;
+
+        if (addToCartButton) {
+          addToCartButton.disabled = !variant.available;
+        }
+
+        if (addToCartText) {
+          addToCartText.textContent = variant.available
+            ? addToCartText.getAttribute('data-available-text')
+            : addToCartText.getAttribute('data-sold-out-text');
+        }
+
+        updateMedia(variant);
+
+        if (window.history && window.history.replaceState) {
+          var url = new URL(window.location.href);
+          url.searchParams.set('variant', variant.id);
+          window.history.replaceState({}, '', url);
+        }
+      }
+
+      optionSelects.forEach(function (select) {
+        select.addEventListener('change', updateForm);
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initHeaderScrollState();
     initMobileMenu();
+    initProductThumbnails();
+    initProductForm();
   });
 })();

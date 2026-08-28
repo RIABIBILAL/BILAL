@@ -43,5 +43,54 @@
   "onboarding": {
     "product_title": "Product title",
     "collection_title": "Collection"
+  },
+  "general": {
+    "pagination": "Pagination",
+    "pagination_previous": "Previous",
+    "pagination_next": "Next",
+    "quantity": "Quantity"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "shipping": "Shipping",
+    "returns": "Returns & exchanges",
+    "related": "You may also like",
+    "media_thumbnails": "Product media"
+  },
+  "collection": {
+    "empty": "No products found in this collection."
+  },
+  "cart": {
+    "title": "Your cart",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "taxes_note": "Taxes and shipping calculated at checkout.",
+    "update": "Update cart",
+    "checkout": "Checkout",
+    "empty": "Your cart is empty.",
+    "continue_shopping": "Continue shopping"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search",
+    "results_count": {
+      "one": "{{ count }} result",
+      "other": "{{ count }} results"
+    },
+    "no_results": "No results found for \"{{ terms }}\"",
+    "type_page": "Page",
+    "type_article": "Article"
+  },
+  "blog": {
+    "empty": "No articles yet."
+  },
+  "article": {
+    "by_author": "By {{ author }}"
+  },
+  "error_404": {
+    "title": "Page not found",
+    "text": "The page you're looking for doesn't exist.",
+    "button": "Back to homepage"
   }
 }

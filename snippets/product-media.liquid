@@ -1,8 +1,40 @@
 {% comment %}
   Snippet: product-media
-  Renders a single product media item (image, video, external_video, model).
-  Full implementation lands in Phase 5 (collection/product architecture).
+  Renders a single product media item (image, video, external_video, model)
+  using Shopify's native media handling.
 
   Accepts:
   - media: {Object} Shopify media object (required)
+  - loading: {String} "lazy" | "eager" (optional, default "lazy")
 {% endcomment %}
+{%- liquid
+  assign media_loading = loading | default: 'lazy'
+-%}
+{%- case media.media_type -%}
+  {%- when 'image' -%}
+    {%- render 'responsive-image',
+      image: media.preview_image,
+      sizes: '(min-width: 750px) 50vw, 100vw',
+      loading: media_loading,
+      class: 'product-media__image'
+    -%}
+  {%- when 'video' -%}
+    <div class="product-media__video-wrapper">
+      {{ media | media_tag: image_size: '1024x', controls: true, class: 'product-media__video' }}
+    </div>
+  {%- when 'external_video' -%}
+    <div class="product-media__video-wrapper">
+      {{ media | external_video_tag: class: 'product-media__external-video' }}
+    </div>
+  {%- when 'model' -%}
+    <div class="product-media__model-wrapper">
+      {{ media | model_viewer_tag: image_size: '1024x', class: 'product-media__model' }}
+    </div>
+  {%- else -%}
+    {%- render 'responsive-image',
+      image: media.preview_image,
+      sizes: '(min-width: 750px) 50vw, 100vw',
+      loading: media_loading,
+      class: 'product-media__image'
+    -%}
+{%- endcase -%}
