@@ -1,10 +1,38 @@
 {% comment %}
   Snippet: button
   Renders the shared ZINARA button component (primary/secondary/ghost).
-  Full implementation lands in Phase 2 (design system).
 
   Accepts:
   - label: {String} button text (required)
-  - url: {String} href (optional — renders <button> when omitted)
-  - style: {String} "primary" | "secondary" | "ghost" (optional)
+  - url: {String} href — renders <a> when present, otherwise <button> (optional)
+  - style: {String} "primary" | "secondary" | "ghost" (optional, default "primary")
+  - type: {String} button[type] when rendering a <button> — "button" | "submit" | "reset" (optional, default "button")
+  - new_window: {Boolean} open link in a new tab when url is present (optional)
+  - disabled: {Boolean} disabled / aria-disabled state (optional)
+  - class: {String} additional classes to append (optional)
 {% endcomment %}
+{%- liquid
+  assign button_style = style | default: 'primary'
+  assign button_classes = 'button button--' | append: button_style
+  if class
+    assign button_classes = button_classes | append: ' ' | append: class
+  endif
+-%}
+{%- if url -%}
+  <a
+    href="{{ url }}"
+    class="{{ button_classes }}"
+    {%- if disabled %} aria-disabled="true" tabindex="-1"{% endif %}
+    {%- if new_window %} target="_blank" rel="noopener"{% endif %}
+  >
+    {{ label }}
+  </a>
+{%- else -%}
+  <button
+    type="{{ type | default: 'button' }}"
+    class="{{ button_classes }}"
+    {%- if disabled %} disabled{% endif %}
+  >
+    {{ label }}
+  </button>
+{%- endif -%}

@@ -6,5 +6,94 @@
     "theme_author": "ZINARA JEWELRY",
     "theme_documentation_url": "https://example.com/zinara-theme-documentation",
     "theme_support_email": "support@example.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_ivory",
+        "label": "Ivory",
+        "default": "#F8F4EE"
+      },
+      {
+        "type": "color",
+        "id": "color_charcoal",
+        "label": "Charcoal",
+        "default": "#171512"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Antique gold",
+        "default": "#B08A45"
+      },
+      {
+        "type": "color",
+        "id": "color_sand",
+        "label": "Soft sand",
+        "default": "#DCCDBB"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Headings"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "label": "Heading font",
+        "default": "playfair-display_n4"
+      },
+      {
+        "type": "range",
+        "id": "type_header_scale",
+        "label": "Heading size scale",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Body"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "inter_n4"
+      },
+      {
+        "type": "range",
+        "id": "type_body_scale",
+        "label": "Body size scale",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "label": "Container width",
+        "min": 1100,
+        "max": 1600,
+        "step": 20,
+        "unit": "px",
+        "default": 1400
+      }
+    ]
   }
 ]
