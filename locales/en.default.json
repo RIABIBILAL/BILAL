@@ -10,5 +10,25 @@
       "expires_on_html": "Expires {{ expires_on }}",
       "shop_link": "Continue shopping"
     }
+  },
+  "header": {
+    "navigation": "Main navigation",
+    "menu": "Menu",
+    "close_menu": "Close menu",
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart"
+  },
+  "footer": {
+    "navigation": "Footer navigation",
+    "social": "Social media",
+    "payment_methods": "Payment methods",
+    "rights_reserved": "All rights reserved.",
+    "newsletter": {
+      "email_label": "Email address",
+      "email_placeholder": "Your email",
+      "submit": "Sign up",
+      "success": "Thank you for subscribing."
+    }
   }
 }

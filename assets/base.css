@@ -273,7 +273,16 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   6. Accessibility
+   6. Icons
+   -------------------------------------------------------------------------- */
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   7. Accessibility
    -------------------------------------------------------------------------- */
 
 /* Visible, high-contrast focus ring on every interactive element, without
@@ -336,8 +345,14 @@ p {
   }
 }
 
+/* Locks background scroll while a full-screen overlay (mobile menu, and
+   future drawers/modals) is open. Toggled on <html> via JS. */
+.has-overlay-open {
+  overflow: hidden;
+}
+
 /* --------------------------------------------------------------------------
-   7. Phase 1 section placeholders (development only)
+   8. Phase 1 section placeholders (development only)
    Removed section-by-section as later phases replace each placeholder
    with its real implementation.
    -------------------------------------------------------------------------- */

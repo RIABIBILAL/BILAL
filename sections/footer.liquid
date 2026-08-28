@@ -1,15 +1,247 @@
-{% comment %}
-  Section: Footer
-  ZINARA JEWELRY — architectural placeholder (Phase 1).
-  Full navigation, newsletter and social links land in Phase 3.
-{% endcomment %}
-<footer class="section-placeholder section-placeholder--footer">
-  <p class="section-placeholder__label">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</p>
+<footer class="site-footer">
+  <div class="site-footer__inner container">
+    <div class="site-footer__brand">
+      <p class="site-footer__wordmark">{{ shop.name }}</p>
+    </div>
+
+    {%- if section.settings.menu != blank -%}
+      <nav class="site-footer__nav" aria-label="{{ 'footer.navigation' | t }}">
+        <ul class="site-footer__nav-list">
+          {%- for link in section.settings.menu.links -%}
+            <li><a href="{{ link.url }}" class="site-footer__nav-link">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    {%- if section.settings.show_newsletter -%}
+      <div class="site-footer__newsletter">
+        {%- if section.settings.newsletter_heading != blank -%}
+          <h2 class="site-footer__newsletter-heading">{{ section.settings.newsletter_heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.newsletter_text != blank -%}
+          <p class="site-footer__newsletter-text">{{ section.settings.newsletter_text }}</p>
+        {%- endif -%}
+
+        {%- form 'customer', id: 'FooterNewsletterForm', class: 'site-footer__newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="visually-hidden" for="FooterNewsletterEmail">{{ 'footer.newsletter.email_label' | t }}</label>
+          <input
+            type="email"
+            name="contact[email]"
+            id="FooterNewsletterEmail"
+            class="site-footer__newsletter-input"
+            placeholder="{{ 'footer.newsletter.email_placeholder' | t }}"
+            autocomplete="email"
+            required
+            {%- if form.errors %} aria-invalid="true"{% endif %}
+          >
+          {%- assign newsletter_submit_label = 'footer.newsletter.submit' | t -%}
+          {%- render 'button', label: newsletter_submit_label, type: 'submit', class: 'site-footer__newsletter-submit' -%}
+
+          {%- if form.posted_successfully? -%}
+            <p class="site-footer__newsletter-message" role="status">{{ 'footer.newsletter.success' | t }}</p>
+          {%- elsif form.errors -%}
+            <p class="site-footer__newsletter-message site-footer__newsletter-message--error" role="alert">
+              {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+            </p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+
+    <div class="site-footer__meta">
+      {%- if settings.social_instagram_link != blank
+        or settings.social_facebook_link != blank
+        or settings.social_pinterest_link != blank
+        or settings.social_tiktok_link != blank
+        or settings.social_x_link != blank
+      -%}
+        <ul class="site-footer__social" aria-label="{{ 'footer.social' | t }}">
+          {%- if settings.social_instagram_link != blank -%}
+            <li><a href="{{ settings.social_instagram_link }}" class="site-footer__social-link">{%- render 'icon', icon: 'instagram' -%}<span class="visually-hidden">Instagram</span></a></li>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <li><a href="{{ settings.social_facebook_link }}" class="site-footer__social-link">{%- render 'icon', icon: 'facebook' -%}<span class="visually-hidden">Facebook</span></a></li>
+          {%- endif -%}
+          {%- if settings.social_pinterest_link != blank -%}
+            <li><a href="{{ settings.social_pinterest_link }}" class="site-footer__social-link">{%- render 'icon', icon: 'pinterest' -%}<span class="visually-hidden">Pinterest</span></a></li>
+          {%- endif -%}
+          {%- if settings.social_tiktok_link != blank -%}
+            <li><a href="{{ settings.social_tiktok_link }}" class="site-footer__social-link">{%- render 'icon', icon: 'tiktok' -%}<span class="visually-hidden">TikTok</span></a></li>
+          {%- endif -%}
+          {%- if settings.social_x_link != blank -%}
+            <li><a href="{{ settings.social_x_link }}" class="site-footer__social-link">{%- render 'icon', icon: 'x' -%}<span class="visually-hidden">X</span></a></li>
+          {%- endif -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if shop.enabled_payment_types.size > 0 -%}
+        <ul class="site-footer__payment-icons" aria-label="{{ 'footer.payment_methods' | t }}">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'site-footer__payment-icon' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <p class="site-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'footer.rights_reserved' | t }}
+      </p>
+    </div>
+  </div>
 </footer>
+
+{% stylesheet %}
+  .site-footer {
+    background-color: var(--zinara-charcoal);
+    color: var(--zinara-ivory);
+    padding-block: var(--zinara-space-2xl);
+  }
+
+  .site-footer a {
+    color: inherit;
+  }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--zinara-space-xl);
+  }
+
+  .site-footer__wordmark {
+    margin: 0;
+    font-family: var(--zinara-font-heading-family);
+    font-size: var(--zinara-text-lg);
+    letter-spacing: var(--zinara-tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .site-footer__nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--zinara-space-2xs);
+  }
+
+  .site-footer__nav-link {
+    font-size: var(--zinara-text-sm);
+  }
+
+  .site-footer__nav-link:hover,
+  .site-footer__nav-link:focus-visible {
+    color: var(--zinara-gold);
+  }
+
+  .site-footer__newsletter-heading {
+    margin: 0 0 var(--zinara-space-2xs);
+    font-size: var(--zinara-text-md);
+  }
+
+  .site-footer__newsletter-text {
+    margin: 0 0 var(--zinara-space-sm);
+    font-size: var(--zinara-text-sm);
+    color: var(--zinara-sand);
+  }
+
+  .site-footer__newsletter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--zinara-space-2xs);
+  }
+
+  .site-footer__newsletter-input {
+    flex: 1 1 12rem;
+    padding: var(--zinara-space-xs) var(--zinara-space-sm);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
+    border-radius: var(--zinara-radius-sm);
+    background-color: transparent;
+    color: var(--zinara-ivory);
+    font-size: var(--zinara-text-sm);
+  }
+
+  .site-footer__newsletter-input::placeholder {
+    color: var(--zinara-sand);
+  }
+
+  .site-footer__newsletter-message {
+    flex-basis: 100%;
+    margin: var(--zinara-space-2xs) 0 0;
+    font-size: var(--zinara-text-xs);
+    color: var(--zinara-sand);
+  }
+
+  .site-footer__newsletter-message--error {
+    color: var(--zinara-gold);
+  }
+
+  .site-footer__social {
+    display: flex;
+    gap: var(--zinara-space-sm);
+    margin: 0 0 var(--zinara-space-md);
+  }
+
+  .site-footer__social-link {
+    display: inline-flex;
+    padding: var(--zinara-space-3xs);
+  }
+
+  .site-footer__social-link:hover,
+  .site-footer__social-link:focus-visible {
+    color: var(--zinara-gold);
+  }
+
+  .site-footer__payment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--zinara-space-2xs);
+    margin: 0 0 var(--zinara-space-md);
+  }
+
+  .site-footer__payment-icon {
+    height: 1.5rem;
+    width: auto;
+  }
+
+  .site-footer__copyright {
+    margin: var(--zinara-space-lg) 0 0;
+    font-size: var(--zinara-text-xs);
+    color: var(--zinara-sand);
+  }
+
+  @media (min-width: 750px) {
+    .site-footer__inner {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: start;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "Footer",
-  "settings": []
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Footer menu",
+      "default": "footer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Join the List"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Sign up for early access to new pieces and Maison news."
+    }
+  ]
 }
 {% endschema %}

@@ -1,13 +1,10 @@
 root: .
 extends: theme-check:recommended
 
-# These snippets are Phase 1 architectural placeholders. They are wired up
-# by the sections/pages built in later phases (2, 3 and 5) and are not
-# dead code.
+# These snippets are Phase 1 architectural placeholders, still unwired
+# until the sections/pages built in Phase 5 consume them. Not dead code.
 OrphanedSnippet:
   ignore:
-    - snippets/button.liquid
-    - snippets/icon.liquid
     - snippets/price.liquid
     - snippets/product-card.liquid
     - snippets/product-media.liquid
