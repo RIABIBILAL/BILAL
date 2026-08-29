@@ -54,9 +54,9 @@
             {{ block.shopify_attributes }}
           >
             <div class="category-tile__media">
-              {%- if block_collection.featured_image -%}
+              {%- if block_collection.image -%}
                 {%- render 'responsive-image',
-                  image: block_collection.featured_image,
+                  image: block_collection.image,
                   sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 100vw',
                   class: 'category-tile__image'
                 -%}

@@ -9,9 +9,9 @@
         {%- for collection in collections -%}
           <a href="{{ collection.url }}" class="category-tile">
             <div class="category-tile__media">
-              {%- if collection.featured_image -%}
+              {%- if collection.image -%}
                 {%- render 'responsive-image',
-                  image: collection.featured_image,
+                  image: collection.image,
                   sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 100vw',
                   class: 'category-tile__image'
                 -%}
