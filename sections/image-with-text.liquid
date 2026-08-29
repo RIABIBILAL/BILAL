@@ -7,6 +7,7 @@
       {%- if section.settings.eyebrow != blank -%}
         <p class="eyebrow">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
+      <span class="accent-rule" aria-hidden="true"></span>
       {%- if section.settings.heading != blank -%}
         <h2 class="image-with-text__statement-heading">{{ section.settings.heading }}</h2>
       {%- endif -%}
@@ -52,7 +53,7 @@
   .image-with-text__inner {
     display: grid;
     gap: var(--zinara-space-lg);
-    align-items: center;
+    align-items: start;
   }
 
   .image-with-text__media {
@@ -83,17 +84,42 @@
 
   @media (min-width: 750px) {
     .image-with-text__inner {
-      grid-template-columns: 1fr 1fr;
+      /* Asymmetric split, image column wider — matches the craftsmanship
+         section's editorial proportions rather than a plain 50/50.
+         Explicit grid-column placement (not `order`) — the markup always
+         renders media before content, so a same-relative-order `order`
+         pair here would silently do nothing. Default is image_position:
+         right, so the image sits in the wider, second column. */
+      grid-template-columns: 5fr 7fr;
       gap: var(--zinara-space-2xl);
     }
 
+    .image-with-text__media {
+      grid-column: 2;
+    }
+
+    .image-with-text__content {
+      grid-column: 1;
+      margin-top: var(--zinara-space-2xl);
+    }
+
+    .image-with-text--image-left .image-with-text__inner {
+      grid-template-columns: 7fr 5fr;
+    }
+
     .image-with-text--image-left .image-with-text__media {
-      order: 1;
+      grid-column: 1;
     }
 
     .image-with-text--image-left .image-with-text__content {
-      order: 2;
+      grid-column: 2;
     }
+  }
+
+  /* A soft-sand band — a deliberate tonal pause between the surrounding
+     ivory sections, using an existing token rather than a new color. */
+  .image-with-text--statement {
+    background-color: var(--zinara-sand);
   }
 
   .image-with-text__statement {
@@ -102,9 +128,35 @@
     text-align: center;
   }
 
+  /* The shared .eyebrow/.accent-rule gold tones are verified against
+     ivory (contrast checked in Phase 2/11A) but fall short against this
+     section's sand background — gold-dark on sand is ~3.4:1 (fails AA
+     text), raw gold on sand is ~2:1 (barely visible). Charcoal keeps the
+     line/label legible and still reads as a deliberate accent; the gold
+     motif already appears in the hero, craftsmanship and newsletter
+     sections on this page. */
+  .image-with-text__statement .eyebrow {
+    color: var(--zinara-charcoal);
+  }
+
+  .image-with-text__statement .accent-rule {
+    margin-inline: auto;
+    background-color: var(--zinara-charcoal);
+  }
+
+  /* Same reasoning: the ghost button's default gold-dark hover would also
+     fall below AA here, so the hover cue is the underline disappearing
+     instead of a color change (still fully accessible, never relies on
+     color alone). */
+  .image-with-text__statement .button--ghost:hover,
+  .image-with-text__statement .button--ghost:focus-visible {
+    color: var(--zinara-charcoal);
+    text-decoration: none;
+  }
+
   .image-with-text__statement-heading {
     margin: 0 0 var(--zinara-space-md);
-    font-size: calc(var(--zinara-text-2xl) * var(--zinara-type-heading-scale));
+    font-size: calc(var(--zinara-text-3xl) * var(--zinara-type-heading-scale));
   }
 
   .image-with-text__statement-body {

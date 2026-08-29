@@ -141,11 +141,18 @@
     z-index: 100;
     background-color: var(--zinara-ivory);
     color: var(--zinara-charcoal);
-    border-bottom: var(--zinara-border-width) solid var(--zinara-sand);
+    /* Borderless at rest — quiet luxury reads as absence of visual noise.
+       A hairline only appears once there's page content scrolling
+       beneath the header, giving it just enough separation. */
+    border-bottom: var(--zinara-border-width) solid transparent;
     transition:
       background-color var(--zinara-duration-base) var(--zinara-ease),
       color var(--zinara-duration-base) var(--zinara-ease),
       border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .site-header--scrolled {
+    border-bottom-color: var(--zinara-sand);
   }
 
   .site-header--transparent:not(.site-header--scrolled) {
@@ -204,7 +211,7 @@
   .site-header__wordmark {
     font-family: var(--zinara-font-heading-family);
     font-size: var(--zinara-text-md);
-    letter-spacing: var(--zinara-tracking-wide);
+    letter-spacing: var(--zinara-tracking-wider);
     text-transform: uppercase;
   }
 
@@ -224,6 +231,7 @@
   }
 
   .site-header__nav-link {
+    position: relative;
     display: inline-block;
     padding-block: var(--zinara-space-2xs);
     font-size: var(--zinara-text-sm);
@@ -231,14 +239,27 @@
     text-transform: uppercase;
   }
 
-  .site-header__nav-link:hover,
-  .site-header__nav-link:focus-visible {
-    color: var(--zinara-gold-dark);
+  /* Refined gold underline reveal, not a flat color swap. */
+  .site-header__nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--zinara-gold-dark);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--zinara-duration-base) var(--zinara-ease);
   }
 
-  .site-header--transparent:not(.site-header--scrolled) .site-header__nav-link:hover,
-  .site-header--transparent:not(.site-header--scrolled) .site-header__nav-link:focus-visible {
-    color: var(--zinara-gold);
+  .site-header__nav-link:hover::after,
+  .site-header__nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .site-header--transparent:not(.site-header--scrolled) .site-header__nav-link::after {
+    background-color: var(--zinara-gold);
   }
 
   .site-header__dropdown {
@@ -297,6 +318,8 @@
     color: inherit;
   }
 
+  /* Charcoal-on-gold: ~5.7:1 contrast, passes WCAG AA. A small deliberate
+     touch of the brand accent, not a decorative flourish. */
   .site-header__cart-count {
     position: absolute;
     top: -2px;
@@ -304,8 +327,8 @@
     min-width: 1rem;
     padding: 0 0.25rem;
     border-radius: 999px;
-    background-color: var(--zinara-charcoal);
-    color: var(--zinara-ivory);
+    background-color: var(--zinara-gold);
+    color: var(--zinara-charcoal);
     font-size: 0.625rem;
     line-height: 1.4;
     text-align: center;

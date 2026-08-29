@@ -17,6 +17,7 @@
   <div class="hero__content container" data-animate>
     {%- if section.settings.eyebrow != blank -%}
       <p class="eyebrow hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      <span class="accent-rule" aria-hidden="true"></span>
     {%- endif -%}
     {%- if section.settings.heading != blank -%}
       <h1 class="hero__heading">{{ section.settings.heading }}</h1>
@@ -49,6 +50,15 @@
     overflow: hidden;
     background-color: var(--zinara-sand);
     color: var(--zinara-charcoal);
+  }
+
+  /* Mobile gets an intentionally shorter hero, not a squeezed desktop
+     one — a full 640-900px block reads as an awkward, mostly-empty
+     scroll on a small screen. */
+  @media (max-width: 749px) {
+    .hero {
+      min-height: min(var(--zinara-hero-min-height, 480px), 88vh);
+    }
   }
 
   .hero--has-image {
@@ -108,6 +118,14 @@
     opacity: 0.85;
   }
 
+  .hero--content-center .accent-rule {
+    margin-inline: auto;
+  }
+
+  .hero--content-right .accent-rule {
+    margin-inline-start: auto;
+  }
+
   .hero__heading {
     margin: 0;
     max-width: 20ch;
@@ -116,9 +134,10 @@
 
   .hero__text {
     margin: 0;
-    max-width: 40ch;
+    max-width: 38ch;
     font-size: var(--zinara-text-md);
     line-height: var(--zinara-leading-relaxed);
+    opacity: 0.92;
   }
 
   .hero__actions {

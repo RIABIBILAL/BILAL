@@ -1,5 +1,6 @@
 <section class="newsletter-section">
   <div class="newsletter-section__inner container" data-animate>
+    <span class="accent-rule newsletter-section__rule" aria-hidden="true"></span>
     {%- if section.settings.heading != blank -%}
       <h2 class="newsletter-section__heading">{{ section.settings.heading }}</h2>
     {%- endif -%}
@@ -47,9 +48,14 @@
     text-align: center;
   }
 
+  .newsletter-section__rule {
+    margin-inline: auto;
+  }
+
   .newsletter-section__heading {
     margin: 0 0 var(--zinara-space-sm);
     color: inherit;
+    font-size: calc(var(--zinara-text-2xl) * var(--zinara-type-heading-scale));
   }
 
   .newsletter-section__body {

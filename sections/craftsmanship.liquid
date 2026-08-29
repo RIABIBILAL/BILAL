@@ -8,6 +8,7 @@
     <div class="craftsmanship__content" data-animate>
       {%- if section.settings.eyebrow != blank -%}
         <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+        <span class="accent-rule" aria-hidden="true"></span>
       {%- endif -%}
       {%- if section.settings.heading != blank -%}
         <h2 class="craftsmanship__heading">{{ section.settings.heading }}</h2>
@@ -37,6 +38,10 @@
     aspect-ratio: 4 / 5;
     overflow: hidden;
     background-color: var(--zinara-sand);
+  }
+
+  .craftsmanship--no-image .accent-rule {
+    margin-inline: auto;
   }
 
   .craftsmanship__image {
@@ -71,12 +76,30 @@
 
   @media (min-width: 750px) {
     .craftsmanship__inner {
-      grid-template-columns: 1fr 1fr;
+      /* Asymmetric editorial split, not an even 50/50 — the image carries
+         more visual weight, and the content column is offset rather than
+         vertically centered against it, the way a magazine spread reads. */
+      grid-template-columns: 7fr 5fr;
       gap: var(--zinara-space-2xl);
+      align-items: start;
+    }
+
+    .craftsmanship__content {
+      margin-top: var(--zinara-space-2xl);
+    }
+
+    .craftsmanship--image-right .craftsmanship__inner {
+      grid-template-columns: 5fr 7fr;
     }
 
     .craftsmanship--image-right .craftsmanship__media {
       order: 2;
+    }
+
+    /* No image, single centered column — the editorial offset only makes
+       sense when there's an image beside it to play against. */
+    .craftsmanship--no-image .craftsmanship__content {
+      margin-top: 0;
     }
   }
 {% endstylesheet %}

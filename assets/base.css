@@ -294,6 +294,17 @@ p {
   flex-shrink: 0;
 }
 
+/* Small geometric hairline — the theme's one recurring gold accent motif
+   (Phase 11A), reused across editorial sections (hero, craftsmanship,
+   newsletter). Always a plain straight line: no gradients, no glow. */
+.accent-rule {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin: var(--zinara-space-2xs) 0 var(--zinara-space-sm);
+  background-color: var(--zinara-gold);
+}
+
 /* --------------------------------------------------------------------------
    7. Product card, price & category tile
    Shared across sections (homepage featured-collection, the collection
@@ -303,7 +314,7 @@ p {
 .product-card {
   display: flex;
   flex-direction: column;
-  gap: var(--zinara-space-2xs);
+  gap: var(--zinara-space-sm);
 }
 
 .product-card__media-link {
@@ -344,7 +355,7 @@ p {
 
 .product-card:hover .product-card__image,
 .product-card:focus-within .product-card__image {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .category-tile {
@@ -368,7 +379,7 @@ p {
 
 .category-tile:hover .category-tile__image,
 .category-tile:focus-visible .category-tile__image {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .category-tile__title {
@@ -391,7 +402,7 @@ p {
   .product-card:focus-within .product-card__media,
   .category-tile:hover .category-tile__media,
   .category-tile:focus-visible .category-tile__media {
-    transform: perspective(800px) rotateX(1.5deg) rotateY(-1.5deg);
+    transform: perspective(800px) rotateX(1deg) rotateY(-1deg);
   }
 }
 
@@ -407,10 +418,14 @@ p {
   text-transform: uppercase;
 }
 
+/* Deliberately no font-weight override here — h1-h6's base rule already
+   sets the merchant's heading font at its natural weight (e.g. Playfair
+   Display regular), which reads far more editorial than a bolded
+   sans-like treatment would. */
 .product-card__title {
   margin: 0;
   font-size: var(--zinara-text-sm);
-  font-weight: 500;
+  letter-spacing: var(--zinara-tracking-tight);
 }
 
 .product-card__title a:hover,

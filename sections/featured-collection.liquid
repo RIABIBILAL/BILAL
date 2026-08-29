@@ -7,6 +7,7 @@
       <div class="featured-collection__header" data-animate>
         {%- if section.settings.eyebrow != blank -%}
           <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+          <span class="accent-rule" aria-hidden="true"></span>
         {%- endif -%}
         {%- if section.settings.heading != blank -%}
           <h2 class="featured-collection__heading">{{ section.settings.heading }}</h2>
@@ -89,19 +90,26 @@
   }
 
   .featured-collection__header {
-    margin-bottom: var(--zinara-space-lg);
+    margin-bottom: var(--zinara-space-xl);
     text-align: center;
   }
 
+  .featured-collection__header .accent-rule {
+    margin-inline: auto;
+  }
+
+  /* Capped at 3 columns even on wide desktop — a denser 4-up grid reads
+     as a generic ecommerce listing. Fewer, larger product photographs
+     carry the editorial weight the brief asks for. */
   .featured-collection__grid,
   .featured-collection__categories {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--zinara-space-md);
+    gap: var(--zinara-space-lg);
   }
 
   .featured-collection__footer {
-    margin-top: var(--zinara-space-lg);
+    margin-top: var(--zinara-space-xl);
     text-align: center;
   }
 
@@ -109,13 +117,7 @@
     .featured-collection__grid,
     .featured-collection__categories {
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--zinara-space-lg);
-    }
-  }
-
-  @media (min-width: 990px) {
-    .featured-collection__grid {
-      grid-template-columns: repeat(4, 1fr);
+      gap: var(--zinara-space-xl);
     }
   }
 {% endstylesheet %}
