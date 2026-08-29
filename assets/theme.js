@@ -103,7 +103,7 @@
         root.querySelectorAll('[data-thumbnail]').forEach(function (t) {
           var isActive = t === thumbnail;
           t.classList.toggle('is-active', isActive);
-          t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          t.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
 
         root.querySelectorAll('.product__media-item').forEach(function (item) {
@@ -162,7 +162,7 @@
         root.querySelectorAll('[data-thumbnail]').forEach(function (t) {
           var matches = t.getAttribute('data-media-id') === mediaId;
           t.classList.toggle('is-active', matches);
-          t.setAttribute('aria-selected', matches ? 'true' : 'false');
+          t.setAttribute('aria-pressed', matches ? 'true' : 'false');
         });
 
         root.querySelectorAll('.product__media-item').forEach(function (item) {

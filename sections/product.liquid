@@ -23,15 +23,14 @@
         </div>
 
         {%- if product.media.size > 1 -%}
-          <div class="product__thumbnails" role="tablist" aria-label="{{ 'product.media_thumbnails' | t }}">
+          <div class="product__thumbnails" role="group" aria-label="{{ 'product.media_thumbnails' | t }}">
             {%- for media in product.media -%}
               <button
                 type="button"
                 class="product__thumbnail{% if forloop.first %} is-active{% endif %}"
                 data-thumbnail
                 data-media-id="{{ media.id }}"
-                role="tab"
-                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
               >
                 {%- render 'responsive-image', image: media.preview_image, sizes: '80px', class: 'product__thumbnail-image' -%}
               </button>
