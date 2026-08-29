@@ -1,0 +1,90 @@
+<section class="list-collections">
+  <div class="list-collections__header container" data-animate>
+    <h1 class="list-collections__title">{{ 'list_collections.title' | t }}</h1>
+  </div>
+
+  <div class="list-collections__inner container">
+    {%- if collections.size > 0 -%}
+      <div class="list-collections__grid">
+        {%- for collection in collections -%}
+          <a href="{{ collection.url }}" class="category-tile">
+            <div class="category-tile__media">
+              {%- if collection.featured_image -%}
+                {%- render 'responsive-image',
+                  image: collection.featured_image,
+                  sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 100vw',
+                  class: 'category-tile__image'
+                -%}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'category-tile__image' }}
+              {%- endif -%}
+            </div>
+            <p class="category-tile__title">{{ collection.title }}</p>
+            {%- if collection.description != blank -%}
+              <p class="category-tile__description">{{ collection.description | strip_html | truncate: 100 }}</p>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p class="list-collections__empty">{{ 'list_collections.empty' | t }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .list-collections {
+    padding-block: var(--zinara-space-2xl);
+  }
+
+  .list-collections__header {
+    margin-bottom: var(--zinara-space-lg);
+    text-align: center;
+  }
+
+  .list-collections__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--zinara-space-md);
+  }
+
+  .list-collections__empty {
+    text-align: center;
+  }
+
+  /* Extends the shared .category-tile component (base.css) with an
+     optional description — only this page shows one. */
+  .category-tile__description {
+    margin: var(--zinara-space-3xs) 0 0;
+    color: var(--zinara-charcoal);
+    opacity: 0.7;
+    font-size: var(--zinara-text-xs);
+    line-height: var(--zinara-leading-relaxed);
+  }
+
+  @media (min-width: 750px) {
+    .list-collections__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--zinara-space-lg);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .list-collections__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .list-collections__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "List collections",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,45 @@
+{% comment %}
+  Snippet: product-card
+  Renders a single product card for grids and carousels.
+
+  Accepts:
+  - card_product: {Object} Product object (required)
+{% endcomment %}
+{%- liquid
+  assign featured_image = card_product.featured_media.preview_image | default: card_product.featured_image
+  assign hover_image = null
+  if card_product.media.size > 1
+    assign hover_image = card_product.media[1].preview_image
+  endif
+  assign on_sale = false
+  if card_product.compare_at_price > card_product.price
+    assign on_sale = true
+  endif
+-%}
+<div class="product-card">
+  <a href="{{ card_product.url }}" class="product-card__media-link">
+    <div class="product-card__media">
+      {%- if featured_image -%}
+        {%- render 'responsive-image',
+          image: featured_image,
+          sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+          class: 'product-card__image product-card__image--primary'
+        -%}
+      {%- endif -%}
+      {%- if hover_image -%}
+        {%- render 'responsive-image',
+          image: hover_image,
+          sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+          class: 'product-card__image product-card__image--hover'
+        -%}
+      {%- endif -%}
+      {%- if on_sale -%}
+        <span class="product-card__badge">{{ 'products.product.on_sale' | t }}</span>
+      {%- endif -%}
+    </div>
+  </a>
+  <div class="product-card__info">
+    <h3 class="product-card__title"><a href="{{ card_product.url }}">{{ card_product.title }}</a></h3>
+    {%- render 'price', product: card_product -%}
+  </div>
+</div>

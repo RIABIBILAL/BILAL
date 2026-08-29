@@ -1,0 +1,50 @@
+{% layout none %}
+{%- assign gift_card_initial_value = gift_card.initial_value | money -%}
+{%- assign gift_card_balance = gift_card.balance | money -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>{{ 'gift_cards.issued.title' | t: value: gift_card_initial_value, shop: shop.name }}</title>
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+  </head>
+  <body class="gift-card">
+    <main class="gift-card__wrap">
+      <header class="gift-card__header">
+        <p class="gift-card__shop">{{ shop.name }}</p>
+      </header>
+
+      <section class="gift-card__card" aria-label="{{ 'gift_cards.issued.title' | t: value: gift_card_initial_value, shop: shop.name }}">
+        <p class="gift-card__value">{{ gift_card_initial_value }}</p>
+
+        {%- if gift_card.enabled -%}
+          <p class="gift-card__balance">
+            {{ 'gift_cards.issued.remaining_html' | t: balance: gift_card_balance }}
+          </p>
+        {%- endif -%}
+
+        <p class="gift-card__code">{{ gift_card.code | format_code }}</p>
+
+        {%- comment -%}
+          A QR code render is intentionally deferred: the theme's pinned
+          Theme Check version does not yet recognize the `qr_code` filter.
+          Revisit once verified against the target Shopify runtime.
+        {%- endcomment -%}
+
+        {%- if gift_card.expired -%}
+          <p class="gift-card__expired">{{ 'gift_cards.issued.expired' | t }}</p>
+        {%- elsif gift_card.expires_on -%}
+          <p class="gift-card__expiry">
+            {{ 'gift_cards.issued.expires_on_html' | t: expires_on: gift_card.expires_on }}
+          </p>
+        {%- endif -%}
+
+        <a class="gift-card__shop-link" href="{{ shop.url }}">
+          {{ 'gift_cards.issued.shop_link' | t }}
+        </a>
+      </section>
+    </main>
+  </body>
+</html>

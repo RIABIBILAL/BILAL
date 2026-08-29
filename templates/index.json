@@ -1,0 +1,98 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "New Arrivals",
+        "heading": "Quiet luxury, deliberately made",
+        "text": "Considered jewelry for everyday radiance.",
+        "button_label": "Shop the collection",
+        "button_link": "/collections/all",
+        "content_position": "center",
+        "overlay_opacity": 20,
+        "min_height": 640
+      }
+    },
+    "featured-collection-new": {
+      "type": "featured-collection",
+      "settings": {
+        "layout": "products",
+        "eyebrow": "Just In",
+        "heading": "New Arrivals",
+        "products_to_show": 4
+      }
+    },
+    "craftsmanship": {
+      "type": "craftsmanship",
+      "settings": {
+        "eyebrow": "Our Craft",
+        "heading": "Made with intention",
+        "body": "<p>Each piece is considered before it is made — clean lines, honest materials, nothing extraneous.</p>",
+        "image_position": "left"
+      }
+    },
+    "image-with-text-editorial": {
+      "type": "image-with-text",
+      "settings": {
+        "layout": "image_text",
+        "eyebrow": "The Edit",
+        "heading": "An editorial moment",
+        "image_position": "right"
+      }
+    },
+    "featured-collection-signature": {
+      "type": "featured-collection",
+      "settings": {
+        "layout": "products",
+        "eyebrow": "Signature",
+        "heading": "Best Sellers",
+        "products_to_show": 4
+      }
+    },
+    "featured-collection-categories": {
+      "type": "featured-collection",
+      "settings": {
+        "layout": "categories",
+        "eyebrow": "Shop By",
+        "heading": "Jewelry Categories"
+      },
+      "blocks": {
+        "category-1": {
+          "type": "category",
+          "settings": {}
+        },
+        "category-2": {
+          "type": "category",
+          "settings": {}
+        },
+        "category-3": {
+          "type": "category",
+          "settings": {}
+        }
+      },
+      "block_order": ["category-1", "category-2", "category-3"]
+    },
+    "image-with-text-statement": {
+      "type": "image-with-text",
+      "settings": {
+        "layout": "statement",
+        "heading": "Jewelry that speaks quietly",
+        "body": "<p>We favor restraint over spectacle — pieces meant to be worn, not just seen.</p>"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "featured-collection-new",
+    "craftsmanship",
+    "image-with-text-editorial",
+    "featured-collection-signature",
+    "featured-collection-categories",
+    "image-with-text-statement",
+    "newsletter"
+  ]
+}

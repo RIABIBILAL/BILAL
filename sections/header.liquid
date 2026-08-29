@@ -1,0 +1,451 @@
+{%- liquid
+  assign logo_height = null
+  if settings.logo and settings.logo.aspect_ratio
+    assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio | round
+  endif
+
+  assign is_transparent = false
+  if section.settings.transparent_on_home and request.page_type == 'index'
+    assign is_transparent = true
+  endif
+-%}
+<header
+  class="site-header{% if is_transparent %} site-header--transparent{% endif %}"
+  data-header
+>
+  {%- if section.settings.announcement_text != blank -%}
+    <div class="site-header__announcement">
+      {%- if section.settings.announcement_link != blank -%}
+        <a href="{{ section.settings.announcement_link }}" class="site-header__announcement-link">{{ section.settings.announcement_text }}</a>
+      {%- else -%}
+        <p class="site-header__announcement-text">{{ section.settings.announcement_text }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="site-header__inner container">
+    <button
+      type="button"
+      class="site-header__menu-toggle"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="SiteHeaderMobileMenu"
+    >
+      {%- render 'icon', icon: 'menu' -%}
+      <span class="visually-hidden">{{ 'header.menu' | t }}</span>
+    </button>
+
+    {%- if settings.logo -%}
+      <a href="{{ routes.root_url }}" class="site-header__logo">
+        {{
+          settings.logo
+          | image_url: width: 600
+          | image_tag:
+            loading: 'eager',
+            width: settings.logo_width,
+            height: logo_height,
+            alt: settings.logo.alt | default: shop.name,
+            class: 'site-header__logo-image',
+            widths: '160,320,480,600'
+        }}
+      </a>
+    {%- else -%}
+      <a href="{{ routes.root_url }}" class="site-header__logo site-header__logo--wordmark">
+        <svg class="site-header__monogram" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path d="M7 9H25L7 23H25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+        </svg>
+        <span class="site-header__wordmark">{{ shop.name }}</span>
+      </a>
+    {%- endif -%}
+
+    <nav class="site-header__nav" aria-label="{{ 'header.navigation' | t }}">
+      <ul class="site-header__nav-list">
+        {%- for link in section.settings.menu.links -%}
+          <li class="site-header__nav-item">
+            <a
+              href="{{ link.url }}"
+              class="site-header__nav-link"
+              {%- if link.active %} aria-current="page"{% endif %}
+            >
+              {{ link.title }}
+            </a>
+            {%- if link.links != blank -%}
+              <ul class="site-header__dropdown">
+                {%- for child_link in link.links -%}
+                  <li>
+                    <a href="{{ child_link.url }}" class="site-header__dropdown-link">{{ child_link.title }}</a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="site-header__utilities">
+      <a href="{{ routes.search_url }}" class="site-header__icon-link">
+        {%- render 'icon', icon: 'search' -%}
+        <span class="visually-hidden">{{ 'header.search' | t }}</span>
+      </a>
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="site-header__icon-link">
+          {%- render 'icon', icon: 'account' -%}
+          <span class="visually-hidden">{{ 'header.account' | t }}</span>
+        </a>
+      {%- endif -%}
+
+      <a href="{{ routes.cart_url }}" class="site-header__icon-link site-header__cart-link">
+        {%- render 'icon', icon: 'bag' -%}
+        <span class="visually-hidden">{{ 'header.cart' | t }}</span>
+        {%- if cart.item_count > 0 -%}
+          <span class="site-header__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+        {%- endif -%}
+      </a>
+    </div>
+  </div>
+
+  <div id="SiteHeaderMobileMenu" class="site-header__mobile-menu" data-mobile-menu hidden>
+    <div class="site-header__mobile-menu-header">
+      <button type="button" class="site-header__menu-close" data-menu-close>
+        {%- render 'icon', icon: 'close' -%}
+        <span class="visually-hidden">{{ 'header.close_menu' | t }}</span>
+      </button>
+    </div>
+    <nav class="site-header__mobile-nav" aria-label="{{ 'header.navigation' | t }}">
+      <ul class="site-header__mobile-nav-list">
+        {%- for link in section.settings.menu.links -%}
+          <li>
+            <a href="{{ link.url }}" class="site-header__mobile-nav-link"{% if link.active %} aria-current="page"{% endif %}>
+              {{ link.title }}
+            </a>
+            {%- if link.links != blank -%}
+              <ul class="site-header__mobile-dropdown">
+                {%- for child_link in link.links -%}
+                  <li><a href="{{ child_link.url }}" class="site-header__mobile-dropdown-link">{{ child_link.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+{% stylesheet %}
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--zinara-ivory);
+    color: var(--zinara-charcoal);
+    /* Borderless at rest — quiet luxury reads as absence of visual noise.
+       A hairline only appears once there's page content scrolling
+       beneath the header, giving it just enough separation. */
+    border-bottom: var(--zinara-border-width) solid transparent;
+    transition:
+      background-color var(--zinara-duration-base) var(--zinara-ease),
+      color var(--zinara-duration-base) var(--zinara-ease),
+      border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .site-header--scrolled {
+    border-bottom-color: var(--zinara-sand);
+  }
+
+  .site-header--transparent:not(.site-header--scrolled) {
+    background-color: transparent;
+    border-bottom-color: transparent;
+    color: var(--zinara-ivory);
+  }
+
+  .site-header__announcement {
+    padding: var(--zinara-space-2xs) var(--zinara-space-md);
+    background-color: var(--zinara-charcoal);
+    color: var(--zinara-ivory);
+    text-align: center;
+    font-size: var(--zinara-text-xs);
+    letter-spacing: var(--zinara-tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .site-header__announcement-text {
+    margin: 0;
+  }
+
+  .site-header__announcement-link {
+    display: block;
+  }
+
+  .site-header__inner {
+    display: grid;
+    /* Equal flexible flanks (not auto/auto) so the logo stays truly
+       centered regardless of how many utility icons render on the right
+       vs. the single menu button on the left. */
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--zinara-space-md);
+    padding-block: var(--zinara-space-sm);
+  }
+
+  .site-header__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--zinara-space-2xs);
+    grid-column: 2;
+    justify-self: center;
+    color: inherit;
+  }
+
+  .site-header__logo-image {
+    width: auto;
+  }
+
+  .site-header__monogram {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .site-header__wordmark {
+    font-family: var(--zinara-font-heading-family);
+    font-size: var(--zinara-text-md);
+    letter-spacing: var(--zinara-tracking-wider);
+    text-transform: uppercase;
+  }
+
+  .site-header__nav {
+    display: none;
+    grid-column: 1;
+  }
+
+  .site-header__nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--zinara-space-lg);
+  }
+
+  .site-header__nav-item {
+    position: relative;
+  }
+
+  .site-header__nav-link {
+    position: relative;
+    display: inline-block;
+    padding-block: var(--zinara-space-2xs);
+    font-size: var(--zinara-text-sm);
+    letter-spacing: var(--zinara-tracking-wide);
+    text-transform: uppercase;
+  }
+
+  /* Refined gold underline reveal, not a flat color swap. */
+  .site-header__nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--zinara-gold-dark);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .site-header__nav-link:hover::after,
+  .site-header__nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .site-header--transparent:not(.site-header--scrolled) .site-header__nav-link::after {
+    background-color: var(--zinara-gold);
+  }
+
+  .site-header__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 12rem;
+    margin-top: var(--zinara-space-2xs);
+    padding: var(--zinara-space-2xs) 0;
+    background-color: var(--zinara-ivory);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition:
+      opacity var(--zinara-duration-fast) var(--zinara-ease),
+      transform var(--zinara-duration-fast) var(--zinara-ease),
+      visibility var(--zinara-duration-fast) var(--zinara-ease);
+  }
+
+  .site-header__nav-item:hover .site-header__dropdown,
+  .site-header__nav-item:focus-within .site-header__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .site-header__dropdown-link {
+    display: block;
+    padding: var(--zinara-space-2xs) var(--zinara-space-sm);
+    color: var(--zinara-charcoal);
+    font-size: var(--zinara-text-sm);
+  }
+
+  .site-header__dropdown-link:hover,
+  .site-header__dropdown-link:focus-visible {
+    color: var(--zinara-gold-dark);
+  }
+
+  .site-header__utilities {
+    display: flex;
+    align-items: center;
+    gap: var(--zinara-space-xs);
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .site-header__icon-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: var(--zinara-space-2xs);
+    color: inherit;
+  }
+
+  /* Charcoal-on-gold: ~5.7:1 contrast, passes WCAG AA. A small deliberate
+     touch of the brand accent, not a decorative flourish. */
+  .site-header__cart-count {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 1rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background-color: var(--zinara-gold);
+    color: var(--zinara-charcoal);
+    font-size: 0.625rem;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .site-header__menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: var(--zinara-space-2xs);
+    background: transparent;
+    border: none;
+    color: inherit;
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .site-header__mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--zinara-ivory);
+    color: var(--zinara-charcoal);
+    padding: var(--zinara-space-md);
+    overflow-y: auto;
+  }
+
+  .site-header__mobile-menu-header {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .site-header__menu-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: var(--zinara-space-2xs);
+    background: transparent;
+    border: none;
+    color: inherit;
+  }
+
+  .site-header__mobile-nav {
+    margin-top: var(--zinara-space-lg);
+  }
+
+  .site-header__mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--zinara-space-sm);
+  }
+
+  .site-header__mobile-nav-link {
+    font-family: var(--zinara-font-heading-family);
+    font-size: var(--zinara-text-lg);
+  }
+
+  .site-header__mobile-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--zinara-space-2xs);
+    margin-top: var(--zinara-space-2xs);
+    padding-left: var(--zinara-space-md);
+  }
+
+  .site-header__mobile-dropdown-link {
+    font-size: var(--zinara-text-base);
+    color: var(--zinara-charcoal);
+    opacity: 0.75;
+  }
+
+  @media (min-width: 990px) {
+    .site-header__nav {
+      display: block;
+    }
+
+    .site-header__menu-toggle,
+    .site-header__mobile-menu {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_on_home",
+      "label": "Transparent on homepage",
+      "info": "Overlays the header on the homepage until the visitor scrolls.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "info": "Leave blank to hide the announcement bar."
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
+    }
+  ]
+}
+{% endschema %}

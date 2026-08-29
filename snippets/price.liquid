@@ -1,0 +1,26 @@
+{% comment %}
+  Snippet: price
+  Renders product price with compare-at / sale state.
+
+  Accepts:
+  - product: {Object} Product object (required)
+{% endcomment %}
+{%- liquid
+  assign compare_at_price = product.compare_at_price
+  assign price = product.price
+  assign on_sale = false
+  if compare_at_price > price
+    assign on_sale = true
+  endif
+-%}
+<div class="price{% if on_sale %} price--sale{% endif %}">
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+    <span class="price__sale">{{ price | money }}</span>
+    <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+    <span class="price__compare">{{ compare_at_price | money }}</span>
+  {%- else -%}
+    <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+    <span class="price__regular">{{ price | money }}</span>
+  {%- endif -%}
+</div>

@@ -1,0 +1,30 @@
+{% comment %}
+  Snippet: pagination
+  Renders native Shopify pagination for a `{% paginate %}` block.
+
+  Accepts:
+  - paginate: {Object} the paginate object from the enclosing {% paginate %} tag (required)
+{% endcomment %}
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" aria-label="{{ 'general.pagination' | t }}">
+    <ul class="pagination__list">
+      {%- if paginate.previous -%}
+        <li><a href="{{ paginate.previous.url }}" class="pagination__link pagination__link--prev">{{ 'general.pagination_previous' | t }}</a></li>
+      {%- endif -%}
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" class="pagination__link">{{ part.title }}</a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span class="pagination__link pagination__link--current" aria-current="page">{{ part.title }}</span>
+          {%- else -%}
+            <span class="pagination__ellipsis">{{ part.title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+      {%- if paginate.next -%}
+        <li><a href="{{ paginate.next.url }}" class="pagination__link pagination__link--next">{{ 'general.pagination_next' | t }}</a></li>
+      {%- endif -%}
+    </ul>
+  </nav>
+{%- endif -%}

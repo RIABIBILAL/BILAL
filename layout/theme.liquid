@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {{ content_for_header }}
+
+    {% style %}
+      :root {
+        --zinara-ivory: {{ settings.color_ivory }};
+        --zinara-charcoal: {{ settings.color_charcoal }};
+        --zinara-gold: {{ settings.color_gold }};
+        --zinara-sand: {{ settings.color_sand }};
+
+        --zinara-font-heading-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+        --zinara-font-heading-style: {{ settings.type_header_font.style }};
+        --zinara-font-heading-weight: {{ settings.type_header_font.weight }};
+        --zinara-type-heading-scale: {{ settings.type_header_scale | divided_by: 100.0 }};
+
+        --zinara-font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+        --zinara-font-body-style: {{ settings.type_body_font.style }};
+        --zinara-font-body-weight: {{ settings.type_body_font.weight }};
+        --zinara-type-body-scale: {{ settings.type_body_scale | divided_by: 100.0 }};
+
+        --zinara-page-width: {{ settings.page_width }}px;
+      }
+
+      {{ settings.type_header_font | font_face: font_display: 'swap' }}
+      {{ settings.type_body_font | font_face: font_display: 'swap' }}
+    {% endstyle %}
+
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  </head>
+
+  <body class="template-{{ request.page_type | handleize }}">
+    <a class="skip-to-content-link" href="#MainContent">
+      {{ 'accessibility.skip_to_content' | t }}
+    </a>
+
+    {% section 'header' %}
+
+    <main id="MainContent" class="content-for-layout">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+  </body>
+</html>

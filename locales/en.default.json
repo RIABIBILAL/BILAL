@@ -1,0 +1,100 @@
+{
+  "accessibility": {
+    "skip_to_content": "Skip to content"
+  },
+  "gift_cards": {
+    "issued": {
+      "title": "{{ value }} gift card for {{ shop }}",
+      "remaining_html": "{{ balance }} left",
+      "expired": "Expired",
+      "expires_on_html": "Expires {{ expires_on }}",
+      "shop_link": "Continue shopping"
+    }
+  },
+  "header": {
+    "navigation": "Main navigation",
+    "menu": "Menu",
+    "close_menu": "Close menu",
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart"
+  },
+  "footer": {
+    "navigation": "Footer navigation",
+    "social": "Social media",
+    "payment_methods": "Payment methods",
+    "rights_reserved": "All rights reserved."
+  },
+  "newsletter": {
+    "email_label": "Email address",
+    "email_placeholder": "Your email",
+    "submit": "Sign up",
+    "success": "Thank you for subscribing."
+  },
+  "products": {
+    "product": {
+      "on_sale": "Sale",
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price"
+      }
+    }
+  },
+  "onboarding": {
+    "product_title": "Product title",
+    "collection_title": "Collection"
+  },
+  "general": {
+    "pagination": "Pagination",
+    "pagination_previous": "Previous",
+    "pagination_next": "Next",
+    "quantity": "Quantity"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "shipping": "Shipping",
+    "returns": "Returns & exchanges",
+    "related": "You may also like",
+    "media_thumbnails": "Product media"
+  },
+  "collection": {
+    "empty": "No products found in this collection."
+  },
+  "list_collections": {
+    "title": "Collections",
+    "empty": "No collections found."
+  },
+  "cart": {
+    "title": "Your cart",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "taxes_note": "Taxes and shipping calculated at checkout.",
+    "update": "Update cart",
+    "checkout": "Checkout",
+    "empty": "Your cart is empty.",
+    "continue_shopping": "Continue shopping"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search",
+    "results_count": {
+      "one": "{{ count }} result",
+      "other": "{{ count }} results"
+    },
+    "no_results": "No results found for \"{{ terms }}\"",
+    "type_page": "Page",
+    "type_article": "Article"
+  },
+  "blog": {
+    "empty": "No articles yet."
+  },
+  "article": {
+    "by_author": "By {{ author }}"
+  },
+  "error_404": {
+    "title": "Page not found",
+    "text": "The page you're looking for doesn't exist.",
+    "button": "Back to homepage"
+  }
+}

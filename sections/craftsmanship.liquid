@@ -1,0 +1,161 @@
+<section class="craftsmanship{% if section.settings.image == blank %} craftsmanship--no-image{% endif %} craftsmanship--image-{{ section.settings.image_position | default: 'left' }}">
+  <div class="craftsmanship__inner container">
+    {%- if section.settings.image -%}
+      <div class="craftsmanship__media">
+        {%- render 'responsive-image', image: section.settings.image, sizes: '(min-width: 750px) 50vw, 100vw', class: 'craftsmanship__image' -%}
+      </div>
+    {%- endif -%}
+    <div class="craftsmanship__content" data-animate>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+        <span class="accent-rule" aria-hidden="true"></span>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="craftsmanship__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.body != blank -%}
+        <div class="craftsmanship__body">{{ section.settings.body }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        {%- render 'button', label: section.settings.button_label, url: section.settings.button_link, style: 'secondary' -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .craftsmanship {
+    padding-block: var(--zinara-space-3xl);
+  }
+
+  .craftsmanship__inner {
+    display: grid;
+    gap: var(--zinara-space-lg);
+    align-items: center;
+  }
+
+  .craftsmanship__media {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background-color: var(--zinara-sand);
+  }
+
+  .craftsmanship--no-image .accent-rule {
+    margin-inline: auto;
+  }
+
+  .craftsmanship__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .craftsmanship__heading {
+    margin: 0 0 var(--zinara-space-sm);
+  }
+
+  .craftsmanship__body {
+    margin-bottom: var(--zinara-space-md);
+    color: var(--zinara-charcoal);
+    line-height: var(--zinara-leading-relaxed);
+  }
+
+  .craftsmanship__body :last-child {
+    margin-bottom: 0;
+  }
+
+  .craftsmanship--no-image .craftsmanship__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .craftsmanship--no-image .craftsmanship__content {
+    max-width: 42rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  @media (min-width: 750px) {
+    .craftsmanship__inner {
+      /* Asymmetric editorial split, not an even 50/50 — the image carries
+         more visual weight, and the content column is offset rather than
+         vertically centered against it, the way a magazine spread reads. */
+      grid-template-columns: 7fr 5fr;
+      gap: var(--zinara-space-2xl);
+      align-items: start;
+    }
+
+    .craftsmanship__content {
+      margin-top: var(--zinara-space-2xl);
+    }
+
+    .craftsmanship--image-right .craftsmanship__inner {
+      grid-template-columns: 5fr 7fr;
+    }
+
+    .craftsmanship--image-right .craftsmanship__media {
+      order: 2;
+    }
+
+    /* No image, single centered column — the editorial offset only makes
+       sense when there's an image beside it to play against. */
+    .craftsmanship--no-image .craftsmanship__content {
+      margin-top: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Craftsmanship",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Our Craft"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Made with intention"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Each piece is considered before it is made — clean lines, honest materials, nothing extraneous.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Craftsmanship"
+    }
+  ]
+}
+{% endschema %}

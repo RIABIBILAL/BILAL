@@ -1,0 +1,137 @@
+<section class="search">
+  <div class="search__inner container">
+    <h1 class="search__title">{{ 'search.title' | t }}</h1>
+
+    <form action="{{ routes.search_url }}" method="get" class="search__form" role="search">
+      <label class="visually-hidden" for="SearchInput">{{ 'search.placeholder' | t }}</label>
+      <input
+        type="search"
+        name="q"
+        id="SearchInput"
+        class="search__input"
+        value="{{ search.terms | escape }}"
+        placeholder="{{ 'search.placeholder' | t }}"
+        autocomplete="off"
+      >
+      <input type="hidden" name="type" value="product">
+      <input type="hidden" name="type" value="page">
+      <input type="hidden" name="type" value="article">
+      <button type="submit" class="search__submit">
+        {%- render 'icon', icon: 'search' -%}
+        <span class="visually-hidden">{{ 'header.search' | t }}</span>
+      </button>
+    </form>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by 24 -%}
+        <p class="search__results-count" role="status">
+          {%- if search.results_count > 0 -%}
+            {{ 'search.results_count' | t: count: search.results_count }}
+          {%- else -%}
+            {{ 'search.no_results' | t: terms: search.terms }}
+          {%- endif -%}
+        </p>
+
+        {%- if search.results_count > 0 -%}
+          <div class="search__results">
+            {%- for item in search.results -%}
+              {%- case item.object_type -%}
+                {%- when 'product' -%}
+                  {%- render 'product-card', card_product: item -%}
+                {%- when 'page' -%}
+                  <a href="{{ item.url }}" class="search__result">
+                    <p class="eyebrow search__result-type">{{ 'search.type_page' | t }}</p>
+                    <h2 class="search__result-title">{{ item.title }}</h2>
+                  </a>
+                {%- when 'article' -%}
+                  <a href="{{ item.url }}" class="search__result">
+                    <p class="eyebrow search__result-type">{{ 'search.type_article' | t }}</p>
+                    <h2 class="search__result-title">{{ item.title }}</h2>
+                  </a>
+              {%- endcase -%}
+            {%- endfor -%}
+          </div>
+
+          {%- render 'pagination', paginate: paginate -%}
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .search {
+    padding-block: var(--zinara-space-2xl);
+  }
+
+  .search__title {
+    margin-bottom: var(--zinara-space-lg);
+    text-align: center;
+  }
+
+  .search__form {
+    display: flex;
+    gap: var(--zinara-space-2xs);
+    max-width: 32rem;
+    margin: 0 auto var(--zinara-space-xl);
+  }
+
+  .search__input {
+    flex: 1;
+    padding: var(--zinara-space-xs) var(--zinara-space-sm);
+    border: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border-radius: var(--zinara-radius-sm);
+    background-color: var(--zinara-ivory);
+  }
+
+  .search__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--zinara-space-xs);
+    border: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border-radius: var(--zinara-radius-sm);
+    background-color: transparent;
+    color: var(--zinara-charcoal);
+    cursor: pointer;
+  }
+
+  .search__results-count {
+    margin-bottom: var(--zinara-space-lg);
+    text-align: center;
+  }
+
+  .search__results {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--zinara-space-md);
+  }
+
+  .search__result {
+    display: block;
+    padding-bottom: var(--zinara-space-md);
+    border-bottom: var(--zinara-border-width) solid var(--zinara-sand);
+  }
+
+  .search__result-type {
+    margin: 0 0 var(--zinara-space-3xs);
+  }
+
+  .search__result-title {
+    margin: 0;
+    font-size: var(--zinara-text-md);
+  }
+
+  @media (min-width: 750px) {
+    .search__results {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": []
+}
+{% endschema %}

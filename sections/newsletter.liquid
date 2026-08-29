@@ -1,0 +1,122 @@
+<section class="newsletter-section">
+  <div class="newsletter-section__inner container" data-animate>
+    <span class="accent-rule newsletter-section__rule" aria-hidden="true"></span>
+    {%- if section.settings.heading != blank -%}
+      <h2 class="newsletter-section__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.body != blank -%}
+      <div class="newsletter-section__body">{{ section.settings.body }}</div>
+    {%- endif -%}
+
+    {%- form 'customer', id: 'NewsletterSectionForm', class: 'newsletter-section__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <label class="visually-hidden" for="NewsletterSectionEmail">{{ 'newsletter.email_label' | t }}</label>
+      <input
+        type="email"
+        name="contact[email]"
+        id="NewsletterSectionEmail"
+        class="newsletter-section__input"
+        placeholder="{{ 'newsletter.email_placeholder' | t }}"
+        autocomplete="email"
+        required
+        {%- if form.errors %} aria-invalid="true"{% endif %}
+      >
+      {%- assign newsletter_submit_label = 'newsletter.submit' | t -%}
+      {%- render 'button', label: newsletter_submit_label, type: 'submit', class: 'newsletter-section__submit' -%}
+
+      {%- if form.posted_successfully? -%}
+        <p class="newsletter-section__message" role="status">{{ 'newsletter.success' | t }}</p>
+      {%- elsif form.errors -%}
+        <p class="newsletter-section__message newsletter-section__message--error" role="alert">
+          {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+        </p>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .newsletter-section {
+    background-color: var(--zinara-charcoal);
+    color: var(--zinara-ivory);
+    padding-block: var(--zinara-space-3xl);
+  }
+
+  .newsletter-section__inner {
+    max-width: 34rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .newsletter-section__rule {
+    margin-inline: auto;
+  }
+
+  .newsletter-section__heading {
+    margin: 0 0 var(--zinara-space-sm);
+    color: inherit;
+    font-size: calc(var(--zinara-text-2xl) * var(--zinara-type-heading-scale));
+  }
+
+  .newsletter-section__body {
+    margin-bottom: var(--zinara-space-lg);
+    color: var(--zinara-sand);
+  }
+
+  .newsletter-section__form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--zinara-space-2xs);
+  }
+
+  .newsletter-section__input {
+    flex: 1 1 16rem;
+    padding: var(--zinara-space-xs) var(--zinara-space-sm);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
+    border-radius: var(--zinara-radius-sm);
+    background-color: transparent;
+    color: var(--zinara-ivory);
+    font-size: var(--zinara-text-sm);
+  }
+
+  .newsletter-section__input::placeholder {
+    color: var(--zinara-sand);
+  }
+
+  .newsletter-section__message {
+    flex-basis: 100%;
+    margin-top: var(--zinara-space-2xs);
+    font-size: var(--zinara-text-xs);
+    color: var(--zinara-sand);
+  }
+
+  .newsletter-section__message--error {
+    color: var(--zinara-gold);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Join the List"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Sign up for early access to new pieces and Maison news.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

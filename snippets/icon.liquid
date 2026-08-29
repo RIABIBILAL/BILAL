@@ -1,0 +1,62 @@
+{% comment %}
+  Snippet: icon
+  Renders an inline SVG icon from the ZINARA icon set. Icons are decorative
+  (aria-hidden) — pair with a visible or .visually-hidden text label.
+
+  Accepts:
+  - icon: {String} one of: search, account, bag, menu, close,
+    instagram, facebook, pinterest, tiktok, x (required)
+{% endcomment %}
+{%- case icon -%}
+  {%- when 'search' -%}
+    <svg class="icon icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <circle cx="10.5" cy="10.5" r="6.5"/>
+      <line x1="20" y1="20" x2="15.3" y2="15.3" stroke-linecap="round"/>
+    </svg>
+  {%- when 'account' -%}
+    <svg class="icon icon-account" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8" r="3.5"/>
+      <path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6" stroke-linecap="round"/>
+    </svg>
+  {%- when 'bag' -%}
+    <svg class="icon icon-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <path d="M6 8h12l1 13H5L6 8Z" stroke-linejoin="round"/>
+      <path d="M9 8V6a3 3 0 0 1 6 0v2" stroke-linecap="round"/>
+    </svg>
+  {%- when 'menu' -%}
+    <svg class="icon icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <line x1="4" y1="7" x2="20" y2="7" stroke-linecap="round"/>
+      <line x1="4" y1="12" x2="20" y2="12" stroke-linecap="round"/>
+      <line x1="4" y1="17" x2="20" y2="17" stroke-linecap="round"/>
+    </svg>
+  {%- when 'close' -%}
+    <svg class="icon icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <line x1="5" y1="5" x2="19" y2="19" stroke-linecap="round"/>
+      <line x1="19" y1="5" x2="5" y2="19" stroke-linecap="round"/>
+    </svg>
+  {%- when 'instagram' -%}
+    <svg class="icon icon-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5"/>
+      <circle cx="12" cy="12" r="4.2"/>
+      <circle cx="17" cy="7" r="0.8" fill="currentColor" stroke="none"/>
+    </svg>
+  {%- when 'facebook' -%}
+    <svg class="icon icon-facebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <path d="M14 21v-8h2.7l.4-3H14V8.2c0-.9.3-1.5 1.6-1.5H17V4.1c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2H8.5v3H10.8v8H14Z" stroke-linejoin="round"/>
+    </svg>
+  {%- when 'pinterest' -%}
+    <svg class="icon icon-pinterest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="8.5"/>
+      <path d="M9.5 19c.6-2 1.3-4.7 1.9-7.3M12 4.5c-2.6 0-4.5 1.7-4.5 4 0 1.5.8 2.5 1.9 2.9M12 4.5c2.9 0 4.7 2 4.7 4.5 0 3-1.6 5.3-4 5.3-1 0-1.8-.5-2.1-1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  {%- when 'tiktok' -%}
+    <svg class="icon icon-tiktok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <path d="M14 4v10.5a3 3 0 1 1-2.4-2.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 4c.3 2 1.9 3.5 4 3.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  {%- when 'x' -%}
+    <svg class="icon icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+      <line x1="5" y1="5" x2="19" y2="19" stroke-linecap="round"/>
+      <line x1="19" y1="5" x2="5" y2="19" stroke-linecap="round"/>
+    </svg>
+{%- endcase -%}
