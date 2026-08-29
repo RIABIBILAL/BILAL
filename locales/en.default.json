@@ -60,7 +60,12 @@
     "media_thumbnails": "Product media"
   },
   "collection": {
-    "empty": "No products found in this collection."
+    "empty": "No products found in this collection.",
+    "empty_cta": "Shop all pieces",
+    "item_count": {
+      "one": "{{ count }} piece",
+      "other": "{{ count }} pieces"
+    }
   },
   "list_collections": {
     "title": "Collections",

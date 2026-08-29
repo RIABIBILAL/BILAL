@@ -456,13 +456,16 @@ p {
   text-decoration: line-through;
 }
 
-/* Pagination — shared by the collection, search and blog pages. */
+/* Pagination — shared by the collection, search and blog pages. Refined
+   (Phase 11C) to match the underline-accent language used elsewhere in
+   the redesign (header nav, product-page thumbnails) instead of a boxed
+   border, and sized to the same 44px touch target as the header icons. */
 .pagination__list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--zinara-space-2xs);
-  margin: var(--zinara-space-lg) 0 0;
+  gap: var(--zinara-space-xs);
+  margin: var(--zinara-space-xl) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -472,15 +475,19 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.25rem;
-  height: 2.25rem;
+  min-width: 2.75rem;
+  height: 2.75rem;
   padding-inline: var(--zinara-space-2xs);
   font-size: var(--zinara-text-sm);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--zinara-duration-base) var(--zinara-ease),
+    border-color var(--zinara-duration-base) var(--zinara-ease);
 }
 
 .pagination__link--current {
-  border: var(--zinara-border-width) solid var(--zinara-charcoal);
-  border-radius: var(--zinara-radius-sm);
+  border-bottom-color: var(--zinara-gold);
+  font-weight: 500;
 }
 
 .pagination__link:hover,

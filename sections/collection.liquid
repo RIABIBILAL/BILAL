@@ -1,13 +1,25 @@
 <section class="collection">
-  <div class="collection__header container">
-    <h1 class="collection__title">{{ collection.title }}</h1>
-    {%- if collection.description != blank -%}
-      <div class="collection__description">{{ collection.description }}</div>
-    {%- endif -%}
-  </div>
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <div class="collection__header" data-animate>
+      {%- if collection.image -%}
+        <div class="collection__image">
+          {%- render 'responsive-image', image: collection.image, sizes: '100vw', loading: 'eager', class: 'collection__image-media' -%}
+        </div>
+      {%- endif -%}
 
-  <div class="collection__inner container">
-    {%- paginate collection.products by section.settings.products_per_page -%}
+      <div class="collection__intro container">
+        {%- if paginate.items > 0 -%}
+          <p class="eyebrow">{{ 'collection.item_count' | t: count: paginate.items }}</p>
+          <span class="accent-rule" aria-hidden="true"></span>
+        {%- endif -%}
+        <h1 class="collection__title">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}
+          <div class="collection__description">{{ collection.description }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="collection__inner container">
       {%- if collection.products.size > 0 -%}
         <div class="collection__grid">
           {%- for product in collection.products -%}
@@ -16,20 +28,62 @@
         </div>
         {%- render 'pagination', paginate: paginate -%}
       {%- else -%}
-        <p class="collection__empty">{{ 'collection.empty' | t }}</p>
+        <div class="collection__empty">
+          <p class="collection__empty-text">{{ 'collection.empty' | t }}</p>
+          {%- assign collection_empty_cta_label = 'collection.empty_cta' | t -%}
+          {%- render 'button', label: collection_empty_cta_label, url: routes.all_products_collection_url, style: 'secondary' -%}
+        </div>
       {%- endif -%}
-    {%- endpaginate -%}
-  </div>
+    </div>
+  {%- endpaginate -%}
 </section>
 
 {% stylesheet %}
+  /* Whitespace above and below the whole section — generous, not a
+     flush full-bleed banner, even when a collection image is set; that
+     reads as the "quiet luxury" the brief asks for rather than the
+     edge-to-edge ecommerce banner it asks to avoid. */
   .collection {
     padding-block: var(--zinara-space-2xl);
   }
 
   .collection__header {
-    margin-bottom: var(--zinara-space-lg);
+    margin-bottom: var(--zinara-space-2xl);
+  }
+
+  /* An editorial photo strip, not an ecommerce banner — full-bleed but
+     capped short, sits above the (separately contained, centered) text
+     rather than behind an overlaid headline. Shorter/squarer on mobile
+     so the crop stays intentional instead of an ultra-wide sliver. */
+  .collection__image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    margin-bottom: var(--zinara-space-xl);
+    background-color: var(--zinara-sand);
+  }
+
+  .collection__image-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 750px) {
+    .collection__image {
+      aspect-ratio: 21 / 9;
+    }
+  }
+
+  .collection__intro {
     text-align: center;
+  }
+
+  .collection__intro .accent-rule {
+    margin-inline: auto;
+  }
+
+  .collection__title {
+    margin: 0 0 var(--zinara-space-sm);
   }
 
   .collection__description {
@@ -39,32 +93,40 @@
     line-height: var(--zinara-leading-relaxed);
   }
 
+  /* Capped at 3 columns even on wide desktop, same reasoning as the
+     redesigned homepage and product-page recommendations — larger
+     photographs read as editorial, a dense 4-up grid reads as generic
+     ecommerce. Products-per-page is unchanged; this only changes how
+     many display per row. */
   .collection__grid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: var(--zinara-space-md);
+    gap: var(--zinara-space-lg);
   }
 
   .collection__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--zinara-space-md);
+    padding-block: var(--zinara-space-2xl);
     text-align: center;
+  }
+
+  .collection__empty-text {
+    margin: 0;
   }
 
   @media (min-width: 750px) {
     .collection__grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--zinara-space-xl);
     }
   }
 
   @media (min-width: 990px) {
     .collection__grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--zinara-space-lg);
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .collection__grid {
-      grid-template-columns: repeat(4, 1fr);
     }
   }
 {% endstylesheet %}
