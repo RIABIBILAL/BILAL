@@ -66,6 +66,14 @@
   --zinara-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --zinara-duration-fast: 150ms;
   --zinara-duration-base: 250ms;
+  --zinara-duration-slow: 600ms;
+}
+
+/* Opt in to the browser's native cross-document view transition, when
+   supported. Zero-risk progressive enhancement: unsupported browsers
+   simply ignore this whole rule (no JS, no fallback needed). */
+@view-transition {
+  navigation: auto;
 }
 
 /* --------------------------------------------------------------------------
@@ -220,10 +228,15 @@ p {
   text-transform: uppercase;
   text-align: center;
   cursor: pointer;
+  /* --zinara-magnetic-x/y are set by theme.js on pointer:fine devices
+     (see Phase 7's "magnetic CTA" interaction) — 0px by default, so this
+     is a no-op everywhere else. */
+  transform: translate(var(--zinara-magnetic-x, 0px), var(--zinara-magnetic-y, 0px));
   transition:
     background-color var(--zinara-duration-base) var(--zinara-ease),
     color var(--zinara-duration-base) var(--zinara-ease),
-    border-color var(--zinara-duration-base) var(--zinara-ease);
+    border-color var(--zinara-duration-base) var(--zinara-ease),
+    transform var(--zinara-duration-fast) var(--zinara-ease);
 }
 
 /* Charcoal-on-gold: ~5.7:1 contrast, passes WCAG AA for normal text. */
@@ -332,6 +345,23 @@ p {
 .product-card:hover .product-card__image,
 .product-card:focus-within .product-card__image {
   transform: scale(1.03);
+}
+
+/* Subtle 3D card perspective — desktop pointer devices only, so it never
+   fights with touch scrolling. Purely decorative; the underlying image
+   zoom above still works without it. */
+@media (hover: hover) and (pointer: fine) {
+  .product-card__media,
+  .category-tile__media {
+    transition: transform var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .product-card:hover .product-card__media,
+  .product-card:focus-within .product-card__media,
+  .category-tile:hover .category-tile__media,
+  .category-tile:focus-visible .category-tile__media {
+    transform: perspective(800px) rotateX(1.5deg) rotateY(-1.5deg);
+  }
 }
 
 .product-card__badge {
@@ -483,7 +513,28 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   9. Phase 1 section placeholders (development only)
+   9. Cinematic interactions (Phase 7) — restrained scroll reveal.
+   theme.js adds .is-animating to [data-animate] elements only when
+   IntersectionObserver exists and prefers-reduced-motion is off, then
+   adds .is-visible once each element scrolls into view. Elements are
+   fully visible by default, so nothing depends on JS running: no FOUC,
+   no permanently-hidden content if a script is blocked or fails.
+   -------------------------------------------------------------------------- */
+[data-animate].is-animating {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--zinara-duration-slow) var(--zinara-ease),
+    transform var(--zinara-duration-slow) var(--zinara-ease);
+}
+
+[data-animate].is-animating.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   10. Phase 1 section placeholders (development only)
    Removed section-by-section as later phases replace each placeholder
    with its real implementation.
    -------------------------------------------------------------------------- */

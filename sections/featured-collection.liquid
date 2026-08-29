@@ -4,7 +4,7 @@
 <section class="featured-collection">
   <div class="featured-collection__inner container">
     {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
-      <div class="featured-collection__header">
+      <div class="featured-collection__header" data-animate>
         {%- if section.settings.eyebrow != blank -%}
           <p class="eyebrow">{{ section.settings.eyebrow }}</p>
         {%- endif -%}

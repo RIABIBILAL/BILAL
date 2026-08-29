@@ -3,8 +3,11 @@
  * Phase 3: header scroll state and the mobile menu disclosure.
  * Phase 5: product page variant picker and media thumbnails.
  * Cart, search and content pages are fully native (no JS required).
- * Cinematic effects are added in a later phase — always respecting
- * prefers-reduced-motion.
+ * Phase 7: restrained cinematic interactions (scroll reveal, magnetic
+ * CTAs, hero parallax) — every one of them checks prefers-reduced-motion
+ * and, where it's a hover-driven effect, (hover: hover) and
+ * (pointer: fine) before doing anything, and none of them hide content
+ * that would stay hidden if the check (or the script) never ran.
  */
 
 (function () {
@@ -200,10 +203,117 @@
     });
   }
 
+  /**
+   * Scroll reveal: fades/settles [data-animate] blocks into place as they
+   * enter the viewport. Elements are visible by default in CSS — only
+   * once this runs (motion allowed, IntersectionObserver available) do
+   * they get hidden-then-revealed, so there's no FOUC and no dependency
+   * on JS for the content to appear.
+   */
+  function initScrollReveal() {
+    var elements = document.querySelectorAll('[data-animate]');
+    if (!elements.length) return;
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    elements.forEach(function (el) {
+      el.classList.add('is-animating');
+    });
+
+    var observer = new IntersectionObserver(
+      function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    elements.forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  /**
+   * Magnetic CTA: primary/secondary buttons drift a few pixels toward the
+   * cursor. Desktop pointer devices only, disabled under reduced motion.
+   * Sets CSS custom properties the .button rule already knows how to
+   * consume — never touches layout-affecting inline styles.
+   */
+  function initMagneticButtons() {
+    if (!window.matchMedia) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var maxOffset = 6;
+    var buttons = document.querySelectorAll('.button--primary, .button--secondary');
+
+    buttons.forEach(function (button) {
+      button.addEventListener('mousemove', function (event) {
+        var rect = button.getBoundingClientRect();
+        var relX = (event.clientX - rect.left) / rect.width - 0.5;
+        var relY = (event.clientY - rect.top) / rect.height - 0.5;
+        button.style.setProperty('--zinara-magnetic-x', (relX * maxOffset * 2).toFixed(1) + 'px');
+        button.style.setProperty('--zinara-magnetic-y', (relY * maxOffset * 2).toFixed(1) + 'px');
+      });
+
+      button.addEventListener('mouseleave', function () {
+        button.style.setProperty('--zinara-magnetic-x', '0px');
+        button.style.setProperty('--zinara-magnetic-y', '0px');
+      });
+    });
+  }
+
+  /**
+   * Hero parallax: the hero image drifts a few pixels vertically with
+   * scroll — capped, rAF-throttled, desktop pointer devices only,
+   * disabled under reduced motion.
+   */
+  function initHeroParallax() {
+    var heroMedia = document.querySelector('.hero__media');
+    if (!heroMedia) return;
+
+    var heroImage = heroMedia.querySelector('.hero__image');
+    if (!heroImage) return;
+
+    if (!window.matchMedia) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var maxShift = 30;
+    var ticking = false;
+
+    function update() {
+      var rect = heroMedia.getBoundingClientRect();
+      var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      var progress = 1 - (rect.top + rect.height / 2) / (viewportHeight + rect.height);
+      var clamped = Math.max(0, Math.min(1, progress));
+      var shift = (clamped - 0.5) * 2 * maxShift;
+      heroImage.style.transform = 'translate3d(0, ' + shift.toFixed(1) + 'px, 0) scale(1.04)';
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initHeaderScrollState();
     initMobileMenu();
     initProductThumbnails();
     initProductForm();
+    initScrollReveal();
+    initMagneticButtons();
+    initHeroParallax();
   });
 })();

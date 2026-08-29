@@ -3,7 +3,7 @@
 -%}
 {%- if layout == 'statement' -%}
   <section class="image-with-text image-with-text--statement">
-    <div class="image-with-text__statement container">
+    <div class="image-with-text__statement container" data-animate>
       {%- if section.settings.eyebrow != blank -%}
         <p class="eyebrow">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
@@ -26,7 +26,7 @@
           {%- render 'responsive-image', image: section.settings.image, sizes: '(min-width: 750px) 50vw, 100vw', class: 'image-with-text__image' -%}
         </div>
       {%- endif -%}
-      <div class="image-with-text__content">
+      <div class="image-with-text__content" data-animate>
         {%- if section.settings.eyebrow != blank -%}
           <p class="eyebrow">{{ section.settings.eyebrow }}</p>
         {%- endif -%}
