@@ -40,12 +40,12 @@
                   {%- render 'product-card', card_product: item -%}
                 {%- when 'page' -%}
                   <a href="{{ item.url }}" class="search__result">
-                    <p class="search__result-type">{{ 'search.type_page' | t }}</p>
+                    <p class="eyebrow search__result-type">{{ 'search.type_page' | t }}</p>
                     <h2 class="search__result-title">{{ item.title }}</h2>
                   </a>
                 {%- when 'article' -%}
                   <a href="{{ item.url }}" class="search__result">
-                    <p class="search__result-type">{{ 'search.type_article' | t }}</p>
+                    <p class="eyebrow search__result-type">{{ 'search.type_article' | t }}</p>
                     <h2 class="search__result-title">{{ item.title }}</h2>
                   </a>
               {%- endcase -%}
@@ -109,16 +109,12 @@
 
   .search__result {
     display: block;
-    padding: var(--zinara-space-md);
-    border: var(--zinara-border-width) solid var(--zinara-sand);
+    padding-bottom: var(--zinara-space-md);
+    border-bottom: var(--zinara-border-width) solid var(--zinara-sand);
   }
 
   .search__result-type {
     margin: 0 0 var(--zinara-space-3xs);
-    font-size: var(--zinara-text-xs);
-    letter-spacing: var(--zinara-tracking-wide);
-    text-transform: uppercase;
-    opacity: 0.6;
   }
 
   .search__result-title {

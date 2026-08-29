@@ -7,6 +7,7 @@
         "heading": "Quiet luxury, deliberately made",
         "text": "Considered jewelry for everyday radiance.",
         "button_label": "Shop the collection",
+        "button_link": "/collections/all",
         "content_position": "center",
         "overlay_opacity": 20,
         "min_height": 640

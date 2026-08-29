@@ -4,6 +4,12 @@
   <div class="product__inner container">
     <div class="product__media">
       {%- if product.media.size > 0 -%}
+        {%- liquid
+          assign selected_media_id = product.selected_or_first_available_variant.featured_media.id
+          if selected_media_id == blank
+            assign selected_media_id = product.media.first.id
+          endif
+        -%}
         <div class="product__media-main" data-product-media-main>
           {%- for media in product.media -%}
             {%- liquid
@@ -11,11 +17,15 @@
               if forloop.first
                 assign media_loading = 'eager'
               endif
+              assign is_selected_media = false
+              if media.id == selected_media_id
+                assign is_selected_media = true
+              endif
             -%}
             <div
-              class="product__media-item{% if forloop.first %} is-active{% endif %}"
+              class="product__media-item{% if is_selected_media %} is-active{% endif %}"
               data-media-id="{{ media.id }}"
-              {% unless forloop.first %}hidden{% endunless %}
+              {% unless is_selected_media %}hidden{% endunless %}
             >
               {%- render 'product-media', media: media, loading: media_loading -%}
             </div>
@@ -25,14 +35,20 @@
         {%- if product.media.size > 1 -%}
           <div class="product__thumbnails" role="group" aria-label="{{ 'product.media_thumbnails' | t }}">
             {%- for media in product.media -%}
+              {%- liquid
+                assign is_selected_media = false
+                if media.id == selected_media_id
+                  assign is_selected_media = true
+                endif
+              -%}
               <button
                 type="button"
-                class="product__thumbnail{% if forloop.first %} is-active{% endif %}"
+                class="product__thumbnail{% if is_selected_media %} is-active{% endif %}"
                 data-thumbnail
                 data-media-id="{{ media.id }}"
-                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-pressed="{% if is_selected_media %}true{% else %}false{% endif %}"
               >
-                {%- render 'responsive-image', image: media.preview_image, sizes: '80px', class: 'product__thumbnail-image' -%}
+                {%- render 'responsive-image', image: media.preview_image, sizes: '80px', widths: '80,160', class: 'product__thumbnail-image' -%}
               </button>
             {%- endfor -%}
           </div>
@@ -143,7 +159,7 @@
     <div class="product__related container">
       <h2 class="product__related-heading">{{ 'product.related' | t }}</h2>
       <div class="product__related-grid">
-        {%- for related_product in related_products -%}
+        {%- for related_product in related_products limit: 25 -%}
           {%- if related_product.id != product.id and related_count < 4 -%}
             {%- render 'product-card', card_product: related_product -%}
             {%- assign related_count = related_count | plus: 1 -%}

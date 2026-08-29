@@ -9,7 +9,7 @@
             <li class="cart__item">
               <a href="{{ item.url }}" class="cart__item-media">
                 {%- if item.image -%}
-                  {%- render 'responsive-image', image: item.image, sizes: '100px', class: 'cart__item-image' -%}
+                  {%- render 'responsive-image', image: item.image, sizes: '100px', widths: '100,200', class: 'cart__item-image' -%}
                 {%- endif -%}
               </a>
               <div class="cart__item-details">
