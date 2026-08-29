@@ -295,10 +295,10 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   7. Product card & price
-   Shared by the homepage featured-collection section (Phase 4) and the
-   collection page (Phase 5) — lives here, not in a section stylesheet,
-   because both consume it.
+   7. Product card, price & category tile
+   Shared across sections (homepage featured-collection, the collection
+   page, and list-collections) — lives here, not in a section stylesheet,
+   because more than one section consumes each of these.
    -------------------------------------------------------------------------- */
 .product-card {
   display: flex;
@@ -345,6 +345,37 @@ p {
 .product-card:hover .product-card__image,
 .product-card:focus-within .product-card__image {
   transform: scale(1.03);
+}
+
+.category-tile {
+  display: block;
+  text-align: center;
+}
+
+.category-tile__media {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  margin-bottom: var(--zinara-space-2xs);
+  background-color: var(--zinara-sand);
+}
+
+.category-tile__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--zinara-duration-base) var(--zinara-ease);
+}
+
+.category-tile:hover .category-tile__image,
+.category-tile:focus-visible .category-tile__image {
+  transform: scale(1.03);
+}
+
+.category-tile__title {
+  margin: 0;
+  font-size: var(--zinara-text-sm);
+  letter-spacing: var(--zinara-tracking-wide);
+  text-transform: uppercase;
 }
 
 /* Subtle 3D card perspective — desktop pointer devices only, so it never

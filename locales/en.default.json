@@ -61,6 +61,10 @@
   "collection": {
     "empty": "No products found in this collection."
   },
+  "list_collections": {
+    "title": "Collections",
+    "empty": "No collections found."
+  },
   "cart": {
     "title": "Your cart",
     "remove": "Remove",
