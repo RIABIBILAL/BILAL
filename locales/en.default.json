@@ -53,6 +53,7 @@
   "product": {
     "add_to_cart": "Add to cart",
     "sold_out": "Sold out",
+    "description": "Description",
     "shipping": "Shipping",
     "returns": "Returns & exchanges",
     "related": "You may also like",

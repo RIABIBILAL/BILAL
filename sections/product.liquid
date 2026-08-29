@@ -128,12 +128,14 @@
         </div>
       {%- endform -%}
 
-      {%- if product.description != blank -%}
-        <div class="product__description">{{ product.description }}</div>
-      {%- endif -%}
-
-      {%- if section.settings.shipping_info != blank or section.settings.returns_info != blank -%}
+      {%- if product.description != blank or section.settings.shipping_info != blank or section.settings.returns_info != blank -%}
         <div class="product__accordions">
+          {%- if product.description != blank -%}
+            <details class="product-accordion" open>
+              <summary class="product-accordion__summary">{{ 'product.description' | t }}</summary>
+              <div class="product-accordion__content">{{ product.description }}</div>
+            </details>
+          {%- endif -%}
           {%- if section.settings.shipping_info != blank -%}
             <details class="product-accordion">
               <summary class="product-accordion__summary">{{ 'product.shipping' | t }}</summary>
@@ -156,8 +158,9 @@
     assign related_count = 0
   -%}
   {%- if related_products.size > 1 -%}
-    <div class="product__related container">
+    <div class="product__related container" data-animate>
       <h2 class="product__related-heading">{{ 'product.related' | t }}</h2>
+      <span class="accent-rule product__related-rule" aria-hidden="true"></span>
       <div class="product__related-grid">
         {%- for related_product in related_products limit: 25 -%}
           {%- if related_product.id != product.id and related_count < 4 -%}
@@ -202,25 +205,51 @@
     object-fit: cover;
   }
 
+  /* Subtle hover interaction on the main image — desktop pointer devices
+     only, same restrained scale used across the redesigned homepage. */
+  @media (hover: hover) and (pointer: fine) {
+    .product-media__image {
+      transition: transform var(--zinara-duration-base) var(--zinara-ease);
+    }
+
+    .product__media-item:hover .product-media__image {
+      transform: scale(1.02);
+    }
+  }
+
   .product__thumbnails {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--zinara-space-2xs);
-    margin-top: var(--zinara-space-sm);
+    gap: var(--zinara-space-sm);
+    margin-top: var(--zinara-space-md);
   }
 
+  /* Elegant thumbnail treatment: dimmed at rest, full opacity plus a thin
+     gold underline when active — not a boxed border. */
   .product__thumbnail {
     width: 4rem;
     height: 4rem;
     padding: 0;
-    border: var(--zinara-border-width) solid transparent;
+    padding-bottom: var(--zinara-space-3xs);
+    border: none;
+    border-bottom: 2px solid transparent;
     overflow: hidden;
     background: transparent;
     cursor: pointer;
+    opacity: 0.55;
+    transition:
+      opacity var(--zinara-duration-base) var(--zinara-ease),
+      border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .product__thumbnail:hover,
+  .product__thumbnail:focus-visible {
+    opacity: 0.85;
   }
 
   .product__thumbnail.is-active {
-    border-color: var(--zinara-gold);
+    opacity: 1;
+    border-bottom-color: var(--zinara-gold);
   }
 
   .product__thumbnail-image {
@@ -231,6 +260,10 @@
 
   .product__title {
     margin: 0 0 var(--zinara-space-sm);
+    /* One step down from the global h1 scale — the page's H1 is sized for
+       a full-width hero; inside this ~50%-width purchase column the same
+       size wraps awkwardly and overwhelms the panel. */
+    font-size: calc(var(--zinara-text-2xl) * var(--zinara-type-heading-scale));
   }
 
   .product__price {
@@ -251,12 +284,24 @@
     text-transform: uppercase;
   }
 
+  /* Understated at rest — a hairline sand border rather than solid
+     charcoal. Charcoal only appears on focus (on top of the shared
+     gold :focus-visible ring), so the control still reads clearly as
+     interactive without looking like a heavy form-field box. */
   .product__option-select,
   .product__quantity-input {
     padding: var(--zinara-space-xs) var(--zinara-space-sm);
-    border: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
     border-radius: var(--zinara-radius-sm);
     background-color: var(--zinara-ivory);
+    transition: border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .product__option-select:hover,
+  .product__option-select:focus-visible,
+  .product__quantity-input:hover,
+  .product__quantity-input:focus-visible {
+    border-color: var(--zinara-charcoal);
   }
 
   .product__option-select {
@@ -292,12 +337,8 @@
     margin-top: var(--zinara-space-2xs);
   }
 
-  .product__description {
-    margin-bottom: var(--zinara-space-lg);
-    line-height: var(--zinara-leading-relaxed);
-  }
-
   .product__accordions {
+    margin-top: var(--zinara-space-lg);
     border-top: var(--zinara-border-width) solid var(--zinara-sand);
   }
 
@@ -307,10 +348,32 @@
   }
 
   .product-accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--zinara-space-sm);
     cursor: pointer;
+    list-style: none;
     font-size: var(--zinara-text-sm);
     letter-spacing: var(--zinara-tracking-wide);
     text-transform: uppercase;
+  }
+
+  /* Hide the browser's default disclosure triangle in favor of a minimal
+     +/− indicator that matches the theme's restrained typography. */
+  .product-accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .product-accordion__summary::after {
+    content: '+';
+    flex-shrink: 0;
+    color: var(--zinara-gold-dark);
+    font-size: var(--zinara-text-md);
+  }
+
+  .product-accordion[open] > .product-accordion__summary::after {
+    content: '\2212';
   }
 
   .product-accordion__content {
@@ -323,14 +386,22 @@
   }
 
   .product__related-heading {
-    margin-bottom: var(--zinara-space-lg);
+    margin-bottom: 0;
     text-align: center;
   }
 
+  .product__related-rule {
+    margin-inline: auto;
+    margin-bottom: var(--zinara-space-xl);
+  }
+
+  /* Capped at 3 columns even on wide desktop, same reasoning as the
+     homepage's featured-collection grid — larger photographs read as
+     editorial, a dense 4-up grid reads as generic ecommerce. */
   .product__related-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--zinara-space-md);
+    gap: var(--zinara-space-lg);
   }
 
   @media (min-width: 750px) {
@@ -339,12 +410,10 @@
       gap: var(--zinara-space-2xl);
       align-items: start;
     }
-  }
 
-  @media (min-width: 990px) {
     .product__related-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--zinara-space-lg);
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--zinara-space-xl);
     }
   }
 {% endstylesheet %}
