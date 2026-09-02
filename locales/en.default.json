@@ -89,6 +89,7 @@
       "other": "{{ count }} results"
     },
     "no_results": "No results found for \"{{ terms }}\"",
+    "empty_cta": "Shop all pieces",
     "type_page": "Page",
     "type_article": "Article"
   },

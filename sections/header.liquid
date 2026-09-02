@@ -348,6 +348,19 @@
     justify-self: start;
   }
 
+  /* Fixed pre-existing bug: an unconditional `display: flex` here (no
+     [hidden]-scoped override) was beating the browser's default
+     `[hidden] { display: none }` — author-origin rules always win over
+     user-agent-origin ones for equal importance, regardless of
+     specificity — so this panel rendered full-screen on top of
+     everything at every viewport below 990px regardless of the hidden
+     attribute or its JS toggle. Verified in an actual browser before and
+     after this fix. Visibility/opacity/transform below now do the actual
+     showing/hiding (kept off position:fixed layout either way, so no
+     effect on the rest of the page), giving a smooth but restrained
+     open/close transition — still fully driven by the same `hidden`
+     attribute theme.js already toggles, so keyboard/AT users get correct
+     focus and accessibility-tree removal exactly as before. */
   .site-header__mobile-menu {
     position: fixed;
     inset: 0;
@@ -358,6 +371,24 @@
     color: var(--zinara-charcoal);
     padding: var(--zinara-space-md);
     overflow-y: auto;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition:
+      opacity var(--zinara-duration-base) var(--zinara-ease),
+      transform var(--zinara-duration-base) var(--zinara-ease),
+      visibility 0s linear 0s;
+  }
+
+  .site-header__mobile-menu[hidden] {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition:
+      opacity var(--zinara-duration-base) var(--zinara-ease),
+      transform var(--zinara-duration-base) var(--zinara-ease),
+      visibility 0s linear var(--zinara-duration-base);
   }
 
   .site-header__mobile-menu-header {
@@ -413,7 +444,10 @@
 
     .site-header__menu-toggle,
     .site-header__mobile-menu {
-      display: none;
+      /* !important: guarantees this beats .site-header__mobile-menu[hidden]
+         (higher specificity) at desktop widths regardless of hidden
+         attribute state — this panel is mobile-only UI. */
+      display: none !important;
     }
   }
 {% endstylesheet %}

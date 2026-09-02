@@ -53,6 +53,11 @@
           </div>
 
           {%- render 'pagination', paginate: paginate -%}
+        {%- else -%}
+          <div class="search__empty">
+            {%- assign search_empty_cta_label = 'search.empty_cta' | t -%}
+            {%- render 'button', label: search_empty_cta_label, url: routes.all_products_collection_url, style: 'secondary' -%}
+          </div>
         {%- endif -%}
       {%- endpaginate -%}
     {%- endif -%}
@@ -76,35 +81,57 @@
     margin: 0 auto var(--zinara-space-xl);
   }
 
+  /* Understated at rest — a hairline sand border rather than solid
+     charcoal, matching the product/cart form controls. Charcoal appears
+     on hover/focus, layered under the existing gold :focus-visible ring
+     for a clear, deliberate focus state. */
   .search__input {
     flex: 1;
     padding: var(--zinara-space-xs) var(--zinara-space-sm);
-    border: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
     border-radius: var(--zinara-radius-sm);
     background-color: var(--zinara-ivory);
+    transition: border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .search__input:hover,
+  .search__input:focus-visible {
+    border-color: var(--zinara-charcoal);
   }
 
   .search__submit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     padding: var(--zinara-space-xs);
-    border: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
     border-radius: var(--zinara-radius-sm);
     background-color: transparent;
     color: var(--zinara-charcoal);
     cursor: pointer;
+    transition: border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .search__submit:hover,
+  .search__submit:focus-visible {
+    border-color: var(--zinara-charcoal);
   }
 
   .search__results-count {
-    margin-bottom: var(--zinara-space-lg);
+    margin-bottom: var(--zinara-space-xl);
+    text-align: center;
+  }
+
+  .search__empty {
     text-align: center;
   }
 
   .search__results {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: var(--zinara-space-md);
+    gap: var(--zinara-space-lg);
   }
 
   .search__result {
@@ -125,6 +152,7 @@
   @media (min-width: 750px) {
     .search__results {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--zinara-space-xl);
     }
   }
 {% endstylesheet %}

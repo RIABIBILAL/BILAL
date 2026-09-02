@@ -9,7 +9,7 @@
             <li class="cart__item">
               <a href="{{ item.url }}" class="cart__item-media">
                 {%- if item.image -%}
-                  {%- render 'responsive-image', image: item.image, sizes: '100px', widths: '100,200', class: 'cart__item-image' -%}
+                  {%- render 'responsive-image', image: item.image, sizes: '120px', widths: '120,240', class: 'cart__item-image' -%}
                 {%- endif -%}
               </a>
               <div class="cart__item-details">
@@ -49,9 +49,11 @@
         </div>
       {%- endform -%}
     {%- else -%}
-      <p class="cart__empty">{{ 'cart.empty' | t }}</p>
-      {%- assign cart_continue_shopping_label = 'cart.continue_shopping' | t -%}
-      {%- render 'button', label: cart_continue_shopping_label, url: routes.all_products_collection_url, style: 'primary' -%}
+      <div class="cart__empty">
+        <p class="cart__empty-text">{{ 'cart.empty' | t }}</p>
+        {%- assign cart_continue_shopping_label = 'cart.continue_shopping' | t -%}
+        {%- render 'button', label: cart_continue_shopping_label, url: routes.all_products_collection_url, style: 'primary' -%}
+      </div>
     {%- endif -%}
   </div>
 </section>
@@ -76,7 +78,7 @@
 
   .cart__item {
     display: grid;
-    grid-template-columns: 5rem 1fr auto;
+    grid-template-columns: 6rem 1fr auto;
     gap: var(--zinara-space-sm);
     align-items: start;
     padding-bottom: var(--zinara-space-md);
@@ -108,22 +110,42 @@
 
   .cart__item-controls {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--zinara-space-sm);
     margin-top: var(--zinara-space-2xs);
   }
 
+  /* Understated at rest — a hairline sand border rather than solid
+     charcoal, matching the product-page form controls. */
   .cart__item-quantity {
     width: 4rem;
     padding: var(--zinara-space-3xs) var(--zinara-space-2xs);
-    border: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
     border-radius: var(--zinara-radius-sm);
     background-color: var(--zinara-ivory);
+    transition: border-color var(--zinara-duration-base) var(--zinara-ease);
   }
 
+  .cart__item-quantity:hover,
+  .cart__item-quantity:focus-visible {
+    border-color: var(--zinara-charcoal);
+  }
+
+  /* Padding brings the tap target to ~44px tall without changing the
+     link's visual size — a bare text link this small otherwise fails a
+     comfortable mobile touch target. */
   .cart__item-remove {
+    display: inline-block;
+    padding-block: var(--zinara-space-xs);
     font-size: var(--zinara-text-xs);
     text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .cart__item-remove:hover,
+  .cart__item-remove:focus-visible {
+    color: var(--zinara-gold-dark);
   }
 
   .cart__item-price {
@@ -133,7 +155,7 @@
 
   .cart__footer {
     padding-top: var(--zinara-space-md);
-    border-top: var(--zinara-border-width) solid var(--zinara-charcoal);
+    border-top: var(--zinara-border-width) solid var(--zinara-sand);
   }
 
   .cart__subtotal {
@@ -161,7 +183,16 @@
   }
 
   .cart__empty {
-    margin-bottom: var(--zinara-space-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--zinara-space-md);
+    padding-block: var(--zinara-space-2xl);
+    text-align: center;
+  }
+
+  .cart__empty-text {
+    margin: 0;
   }
 {% endstylesheet %}
 
