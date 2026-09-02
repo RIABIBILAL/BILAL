@@ -190,6 +190,20 @@
     padding-block: var(--zinara-space-sm);
   }
 
+  /* Phase 12 fix: at narrow phone widths, the 44px menu toggle on one
+     flank and the 44px-per-icon utilities row (search/account/cart) on
+     the other don't both fit their content at the default gap once a
+     centered wordmark (no logo image uploaded) is between them — grid's
+     equal 1fr flanks won't shrink below either side's content minimum,
+     so the header overflowed the viewport horizontally (verified: 4px
+     at 375px, 58px at 320px). Tightening the gaps here reclaims just
+     enough width without touching any touch target size. */
+  @media (max-width: 749px) {
+    .site-header__inner {
+      gap: var(--zinara-space-sm);
+    }
+  }
+
   .site-header__logo {
     display: inline-flex;
     align-items: center;
@@ -213,6 +227,18 @@
     font-size: var(--zinara-text-md);
     letter-spacing: var(--zinara-tracking-wider);
     text-transform: uppercase;
+  }
+
+  /* Completes the overflow fix above: below 375px the text wordmark
+     (used when no logo image is uploaded) is the last remaining source
+     of horizontal overflow once the gaps are already tightened. One
+     step down the type scale — still fully legible, matches the
+     tracking already used on nav links at this size. */
+  @media (max-width: 374px) {
+    .site-header__wordmark {
+      font-size: var(--zinara-text-sm);
+      letter-spacing: var(--zinara-tracking-wide);
+    }
   }
 
   .site-header__nav {
@@ -305,6 +331,14 @@
     gap: var(--zinara-space-xs);
     grid-column: 3;
     justify-self: end;
+  }
+
+  /* Same overflow fix as .site-header__inner above — tightens the space
+     between the three utility icons themselves on narrow phones. */
+  @media (max-width: 749px) {
+    .site-header__utilities {
+      gap: var(--zinara-space-3xs);
+    }
   }
 
   .site-header__icon-link {
