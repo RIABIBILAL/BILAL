@@ -1,0 +1,539 @@
+{%- comment -%}
+  Section: hero-3d
+  A cinematic 3D jewelry hero for the homepage. Progressive enhancement
+  over a fully-functional static hero: the fallback image below is the
+  real, immediately-visible hero (LCP-safe); Three.js is only fetched,
+  and the WebGL scene only built, once prefers-reduced-motion and WebGL
+  support have both been checked. If either check fails, or the module
+  fails to load, the page simply keeps the static image -- there is no
+  broken or blank state.
+
+  The 3D scene is a single low-poly ring + faceted stone, lit with a
+  procedurally-baked studio environment (no external HDR/image assets,
+  see the script below) and restrained three-point lighting, using the
+  theme's own gold/ivory/sand/charcoal tokens so it always matches
+  whatever palette the merchant has configured in Theme Settings.
+{%- endcomment -%}
+{%- liquid
+  assign content_position = section.settings.content_position | default: 'center'
+  assign overlay_opacity = section.settings.overlay_opacity | default: 20 | divided_by: 100.0
+  assign min_height = section.settings.min_height | default: 640
+-%}
+<section
+  class="hero-3d hero-3d--content-{{ content_position }}"
+  style="--zinara-hero-min-height: {{ min_height }}px; --zinara-hero-overlay: {{ overlay_opacity }};"
+  data-hero-3d
+  data-section-id="{{ section.id }}"
+>
+  <div class="hero-3d__media" aria-hidden="true">
+    {%- if section.settings.fallback_image -%}
+      {%- render 'responsive-image', image: section.settings.fallback_image, sizes: '100vw', loading: 'eager', class: 'hero-3d__poster' -%}
+    {%- else -%}
+      <div class="hero-3d__poster hero-3d__poster--placeholder"></div>
+    {%- endif -%}
+    <div class="hero-3d__overlay"></div>
+    <canvas class="hero-3d__canvas" data-hero-3d-canvas hidden></canvas>
+  </div>
+
+  <div class="hero-3d__content container" data-animate>
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="eyebrow hero-3d__eyebrow">{{ section.settings.eyebrow }}</p>
+      <span class="accent-rule" aria-hidden="true"></span>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h1 class="hero-3d__heading">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <p class="hero-3d__text">{{ section.settings.text }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank or section.settings.button_label_2 != blank -%}
+      <div class="hero-3d__actions">
+        {%- if section.settings.button_label != blank -%}
+          {%- render 'button', label: section.settings.button_label, url: section.settings.button_link, style: 'primary' -%}
+        {%- endif -%}
+        {%- if section.settings.button_label_2 != blank -%}
+          {%- render 'button', label: section.settings.button_label_2, url: section.settings.button_link_2, style: 'secondary' -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script type="module">
+  (function () {
+    'use strict';
+
+    var root = document.querySelector('[data-hero-3d][data-section-id="{{ section.id }}"]');
+    if (!root) return;
+
+    var canvas = root.querySelector('[data-hero-3d-canvas]');
+    var poster = root.querySelector('.hero-3d__poster');
+    if (!canvas) return;
+
+    // The single most important performance/accessibility guard: under
+    // reduced motion, or without WebGL, Three.js is never even fetched.
+    // The static poster above is a complete hero on its own.
+    var prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function supportsWebGL() {
+      try {
+        var test = document.createElement('canvas');
+        return !!(
+          window.WebGLRenderingContext &&
+          (test.getContext('webgl2') || test.getContext('webgl'))
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+    if (prefersReducedMotion || !supportsWebGL()) return;
+
+    // Defer the Three.js import off the critical rendering path -- the
+    // poster image is already a complete, visible hero at this point,
+    // so there is nothing time-critical about starting the 3D scene a
+    // beat later.
+    var idle =
+      window.requestIdleCallback || function (callback) { return window.setTimeout(callback, 200); };
+
+    idle(function () {
+      import('{{ 'vendor-three.module.min.js' | asset_url }}')
+        .then(function (THREE) {
+          initScene(THREE, root, canvas, poster);
+        })
+        .catch(function () {
+          // Module failed to load (offline, blocked, etc.) -- stay on
+          // the poster. Nothing more to do.
+        });
+    });
+
+    function readToken(name, fallback) {
+      var value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return value || fallback;
+    }
+
+    function initScene(THREE, root, canvas, poster) {
+      var goldColor = readToken('--zinara-gold', '#B08A45');
+      var ivoryColor = readToken('--zinara-ivory', '#F8F4EE');
+      var sandColor = readToken('--zinara-sand', '#DCCDBB');
+
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      // Capped, and capped harder on narrow viewports -- a full-res 3D
+      // render on a small, often battery-limited phone is not worth it.
+      var pixelRatioCap = root.clientWidth < 750 ? 1.5 : 2;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelRatioCap));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+      camera.position.set(0, 0, 6);
+
+      // --- Procedural studio environment, baked into a reflection map.
+      // No external HDR image or extra module: a handful of unlit
+      // planes standing in for softboxes, captured with PMREMGenerator.
+      // This is what gives the metal its "photographed in a studio"
+      // reflections instead of looking flat. ---
+      var pmrem = new THREE.PMREMGenerator(renderer);
+      var envScene = new THREE.Scene();
+      envScene.add(
+        new THREE.Mesh(
+          new THREE.BoxGeometry(20, 20, 20),
+          new THREE.MeshBasicMaterial({ color: ivoryColor, side: THREE.BackSide })
+        )
+      );
+      var softLightTop = new THREE.Mesh(
+        new THREE.PlaneGeometry(9, 9),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+      );
+      softLightTop.position.set(0, 7, 0);
+      softLightTop.rotation.x = Math.PI / 2;
+      envScene.add(softLightTop);
+      var warmFill = new THREE.Mesh(
+        new THREE.PlaneGeometry(6, 10),
+        new THREE.MeshBasicMaterial({ color: sandColor, side: THREE.DoubleSide })
+      );
+      warmFill.position.set(-8, 0, 2);
+      warmFill.rotation.y = Math.PI / 4;
+      envScene.add(warmFill);
+      var envRenderTarget = pmrem.fromScene(envScene, 0.04);
+      var envMap = envRenderTarget.texture;
+      scene.environment = envMap;
+      pmrem.dispose();
+
+      // --- The jewel: a ring with a small faceted stone, both gold,
+      // distinguished by roughness/clearcoat rather than color -- a
+      // single quiet piece of jewelry, not a gem-encrusted showpiece. ---
+      var jewelGroup = new THREE.Group();
+
+      var ringMaterial = new THREE.MeshPhysicalMaterial({
+        color: goldColor,
+        metalness: 1,
+        roughness: 0.28,
+        clearcoat: 0.5,
+        clearcoatRoughness: 0.25,
+        envMap: envMap,
+        envMapIntensity: 1.1,
+      });
+      var ringGeometry = new THREE.TorusGeometry(1.3, 0.22, 48, 128);
+      var ring = new THREE.Mesh(ringGeometry, ringMaterial);
+      // A shallower tilt than a "flat lay" so the ring's opening actually
+      // reads as a ring while it turns, rather than a foreshortened blob
+      // -- verified across a full rotation in a headless-browser check
+      // before landing on this angle.
+      ring.rotation.x = Math.PI / 3.8;
+      jewelGroup.add(ring);
+
+      var gemMaterial = new THREE.MeshPhysicalMaterial({
+        color: goldColor,
+        metalness: 0.85,
+        roughness: 0.12,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.05,
+        envMap: envMap,
+        envMapIntensity: 1.4,
+      });
+      var gemGeometry = new THREE.IcosahedronGeometry(0.34, 0);
+      var gem = new THREE.Mesh(gemGeometry, gemMaterial);
+      // Sits on the band's near-top edge, matched to the ring's tilt
+      // above, rather than floating disconnected over its center.
+      gem.position.set(0, 0.62, 0.55);
+      jewelGroup.add(gem);
+
+      // Scaled down and nudged up so the jewel reads as an accent behind
+      // the heading, not a shape competing with it for the eye.
+      jewelGroup.scale.setScalar(0.72);
+      jewelGroup.position.y = 0.35;
+      scene.add(jewelGroup);
+
+      // Restrained three-point studio lighting on top of the baked
+      // environment -- kept low-key so the metal reads as lit, not lurid.
+      scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+      var keyLight = new THREE.DirectionalLight(0xfff4e0, 1.1);
+      keyLight.position.set(4, 5, 6);
+      scene.add(keyLight);
+      var rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+      rimLight.position.set(-5, 2, -4);
+      scene.add(rimLight);
+
+      function resize() {
+        var width = root.clientWidth;
+        var height = root.clientHeight;
+        if (!width || !height) return;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height, false);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var clock = new THREE.Clock();
+
+      // Subtle mouse parallax -- desktop pointer devices only, the same
+      // (hover: hover) and (pointer: fine) gate theme.js uses for its
+      // other cinematic interactions (magnetic buttons, hero parallax).
+      var pointerTarget = { x: 0, y: 0 };
+      var pointerCurrent = { x: 0, y: 0 };
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        root.addEventListener('mousemove', function (event) {
+          var rect = root.getBoundingClientRect();
+          pointerTarget.x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+          pointerTarget.y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+        });
+        root.addEventListener('mouseleave', function () {
+          pointerTarget.x = 0;
+          pointerTarget.y = 0;
+        });
+      }
+
+      // Cinematic scroll transition -- a gentle camera dolly as the hero
+      // leaves the viewport, rAF-throttled like theme.js's own hero
+      // parallax so it never runs more than once per frame.
+      var scrollProgress = 0;
+      var scrollTicking = false;
+      function updateScrollProgress() {
+        var rect = root.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        var progress = 1 - (rect.top + rect.height / 2) / (viewportHeight + rect.height);
+        scrollProgress = Math.max(0, Math.min(1, progress));
+        scrollTicking = false;
+      }
+      window.addEventListener(
+        'scroll',
+        function () {
+          if (!scrollTicking) {
+            window.requestAnimationFrame(updateScrollProgress);
+            scrollTicking = true;
+          }
+        },
+        { passive: true }
+      );
+      updateScrollProgress();
+
+      var revealed = false;
+      renderer.setAnimationLoop(function () {
+        var delta = clock.getDelta();
+
+        // Slow, elegant autorotation -- the section's one constant motion.
+        jewelGroup.rotation.y += delta * 0.18;
+
+        pointerCurrent.x += (pointerTarget.x - pointerCurrent.x) * 0.05;
+        pointerCurrent.y += (pointerTarget.y - pointerCurrent.y) * 0.05;
+        camera.position.x = pointerCurrent.x * 0.6;
+        camera.position.y = -pointerCurrent.y * 0.4 + scrollProgress * 0.8;
+        camera.position.z = 6 - scrollProgress * 1.2;
+        camera.lookAt(0, 0.3, 0);
+
+        renderer.render(scene, camera);
+
+        if (!revealed) {
+          revealed = true;
+          canvas.hidden = false;
+          // One more frame so the browser has painted before the
+          // opacity transition starts -- avoids a one-frame flash of
+          // an unrendered (black) canvas.
+          window.requestAnimationFrame(function () {
+            canvas.classList.add('is-ready');
+          });
+          if (poster) poster.classList.add('is-faded');
+        }
+      });
+
+      // Theme editor: dispose cleanly when this section is removed or
+      // re-rendered, so repeated edits in the customizer don't leak
+      // WebGL contexts.
+      document.addEventListener('shopify:section:unload', function handleUnload(event) {
+        if (!event.detail || event.detail.sectionId !== '{{ section.id }}') return;
+        renderer.setAnimationLoop(null);
+        window.removeEventListener('resize', resize);
+        ringGeometry.dispose();
+        gemGeometry.dispose();
+        ringMaterial.dispose();
+        gemMaterial.dispose();
+        envRenderTarget.dispose();
+        renderer.dispose();
+        document.removeEventListener('shopify:section:unload', handleUnload);
+      });
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  .hero-3d {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--zinara-hero-min-height, 480px);
+    overflow: hidden;
+    background-color: var(--zinara-sand);
+    color: var(--zinara-ivory);
+  }
+
+  @media (max-width: 749px) {
+    .hero-3d {
+      min-height: min(var(--zinara-hero-min-height, 480px), 88vh);
+    }
+  }
+
+  .hero-3d__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-3d__poster,
+  .hero-3d__poster--placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--zinara-duration-slow) var(--zinara-ease);
+  }
+
+  .hero-3d__poster--placeholder {
+    background: linear-gradient(135deg, var(--zinara-sand), var(--zinara-charcoal));
+  }
+
+  .hero-3d__poster.is-faded {
+    opacity: 0;
+  }
+
+  .hero-3d__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--zinara-charcoal);
+    opacity: var(--zinara-hero-overlay, 0.2);
+  }
+
+  .hero-3d__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity var(--zinara-duration-slow) var(--zinara-ease);
+  }
+
+  .hero-3d__canvas.is-ready {
+    opacity: 1;
+  }
+
+  .hero-3d__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--zinara-space-sm);
+    padding-block: var(--zinara-space-2xl);
+  }
+
+  .hero-3d--content-left .hero-3d__content {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero-3d--content-center .hero-3d__content {
+    align-items: center;
+    text-align: center;
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .hero-3d--content-right .hero-3d__content {
+    align-items: flex-end;
+    text-align: right;
+    margin-inline-start: auto;
+  }
+
+  .hero-3d__eyebrow {
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  .hero-3d--content-center .accent-rule {
+    margin-inline: auto;
+  }
+
+  .hero-3d--content-right .accent-rule {
+    margin-inline-start: auto;
+  }
+
+  .hero-3d__heading {
+    margin: 0;
+    max-width: 20ch;
+    color: inherit;
+  }
+
+  .hero-3d__text {
+    margin: 0;
+    max-width: 38ch;
+    font-size: var(--zinara-text-md);
+    line-height: var(--zinara-leading-relaxed);
+    opacity: 0.92;
+  }
+
+  .hero-3d__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--zinara-space-sm);
+    margin-top: var(--zinara-space-sm);
+  }
+
+  .hero-3d--content-center .hero-3d__actions {
+    justify-content: center;
+  }
+
+  .hero-3d--content-right .hero-3d__actions {
+    justify-content: flex-end;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "3D Hero",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows an interactive 3D jewelry scene (Three.js/WebGL) once it loads. The fallback image below is the real hero shown immediately, and stays in place for anyone with reduced-motion enabled or without WebGL support -- upload one that works well on its own."
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Fallback / poster image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Quiet luxury, deliberately made"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Subheading",
+      "default": "Considered jewelry for everyday radiance."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Primary button label",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "Secondary button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimum height",
+      "min": 400,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 640
+    }
+  ],
+  "presets": [
+    {
+      "name": "3D Hero"
+    }
+  ]
+}
+{% endschema %}

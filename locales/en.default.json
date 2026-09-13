@@ -103,5 +103,14 @@
     "title": "Page not found",
     "text": "The page you're looking for doesn't exist.",
     "button": "Back to homepage"
+  },
+  "contact": {
+    "title": "Contact",
+    "name_label": "Name",
+    "email_label": "Email",
+    "phone_label": "Phone",
+    "message_label": "Message",
+    "submit": "Send",
+    "success": "Thanks for reaching out — we'll be in touch soon."
   }
 }

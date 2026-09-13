@@ -1,7 +1,7 @@
 {
   "sections": {
     "hero": {
-      "type": "hero",
+      "type": "hero-3d",
       "settings": {
         "eyebrow": "New Arrivals",
         "heading": "Quiet luxury, deliberately made",

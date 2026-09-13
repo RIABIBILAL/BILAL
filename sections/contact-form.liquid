@@ -1,0 +1,164 @@
+<section class="contact">
+  <div class="contact__inner container">
+    <h1 class="contact__title">{{ page.title | default: 'contact.title' | t }}</h1>
+    {%- if page.content != blank -%}
+      <div class="contact__intro">{{ page.content }}</div>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'ContactForm', class: 'contact__form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="contact__message" role="status">{{ 'contact.success' | t }}</p>
+      {%- elsif form.errors -%}
+        <div class="contact__message contact__message--error" role="alert">
+          <ul class="contact__error-list">
+            {%- for field in form.errors -%}
+              <li>
+                {%- if field == 'form' -%}
+                  {{ form.errors.messages[field] }}
+                {%- else -%}
+                  {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <div class="contact__field">
+        <label class="contact__label" for="ContactFormName">{{ 'contact.name_label' | t }}</label>
+        <input
+          type="text"
+          id="ContactFormName"
+          class="contact__input"
+          name="contact[name]"
+          value="{{ form.name }}"
+          autocomplete="name"
+        >
+      </div>
+
+      <div class="contact__field">
+        <label class="contact__label" for="ContactFormEmail">{{ 'contact.email_label' | t }}</label>
+        <input
+          type="email"
+          id="ContactFormEmail"
+          class="contact__input"
+          name="contact[email]"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="email"
+          value="{{ form.email }}"
+          required
+          {%- if form.errors contains 'email' %} aria-invalid="true"{% endif %}
+        >
+      </div>
+
+      <div class="contact__field">
+        <label class="contact__label" for="ContactFormPhone">{{ 'contact.phone_label' | t }}</label>
+        <input
+          type="tel"
+          id="ContactFormPhone"
+          class="contact__input"
+          name="contact[phone]"
+          autocomplete="tel"
+          value="{{ form.phone }}"
+        >
+      </div>
+
+      <div class="contact__field">
+        <label class="contact__label" for="ContactFormMessage">{{ 'contact.message_label' | t }}</label>
+        <textarea
+          rows="6"
+          id="ContactFormMessage"
+          class="contact__input contact__input--textarea"
+          name="contact[body]"
+        >{{ form.body }}</textarea>
+      </div>
+
+      {%- assign contact_submit_label = 'contact.submit' | t -%}
+      {%- render 'button', label: contact_submit_label, type: 'submit', style: 'primary' -%}
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .contact {
+    padding-block: var(--zinara-space-2xl);
+  }
+
+  .contact__inner {
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .contact__title {
+    margin-bottom: var(--zinara-space-sm);
+    text-align: center;
+  }
+
+  .contact__intro {
+    margin-bottom: var(--zinara-space-lg);
+    text-align: center;
+    color: var(--zinara-charcoal);
+    line-height: var(--zinara-leading-relaxed);
+  }
+
+  .contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--zinara-space-md);
+  }
+
+  .contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--zinara-space-3xs);
+  }
+
+  .contact__label {
+    font-size: var(--zinara-text-sm);
+    letter-spacing: var(--zinara-tracking-wide);
+    text-transform: uppercase;
+  }
+
+  /* Same hairline-at-rest, charcoal-on-hover/focus treatment used by
+     every other form control across the theme (product, cart, search). */
+  .contact__input {
+    padding: var(--zinara-space-xs) var(--zinara-space-sm);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
+    border-radius: var(--zinara-radius-sm);
+    background-color: var(--zinara-ivory);
+    transition: border-color var(--zinara-duration-base) var(--zinara-ease);
+  }
+
+  .contact__input:hover,
+  .contact__input:focus-visible {
+    border-color: var(--zinara-charcoal);
+  }
+
+  .contact__input--textarea {
+    resize: vertical;
+  }
+
+  .contact__message {
+    margin: 0;
+    padding: var(--zinara-space-sm);
+    border: var(--zinara-border-width) solid var(--zinara-sand);
+    font-size: var(--zinara-text-sm);
+  }
+
+  .contact__message--error {
+    border-color: var(--zinara-gold-dark);
+  }
+
+  .contact__error-list {
+    margin: 0;
+    padding-left: var(--zinara-space-md);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": []
+}
+{% endschema %}
