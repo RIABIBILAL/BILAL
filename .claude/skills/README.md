@@ -31,3 +31,24 @@ and are not connected to any OmniRoute instance from this repository or
 this Shopify theme. They're only actionable if you separately deploy
 OmniRoute and provide its API base URL and token. They are unrelated to the
 ZINARA JEWELRY theme.
+
+## 21st-ui skill (21st.dev / magic-mcp)
+
+`21st-ui` is vendored from
+[github.com/21st-dev/magic-mcp](https://github.com/21st-dev/magic-mcp)
+(ISC-licensed, Copyright (c) 2026 21st.dev). It's a workflow guide for the
+**21st MCP** — a live UI-component marketplace (search/install/generate
+React+Tailwind components) reached over the MCP server wired up in this
+repo's `.mcp.json`.
+
+Unlike the other vendored skills above, this one needs a real, authenticated
+MCP connection to do anything: `.mcp.json` points at
+`https://21st.dev/api/mcp` with the API key read from the `API_KEY_21ST`
+environment variable — **no key is stored in this repository**. Get a free
+key at [21st.dev/mcp](https://21st.dev/mcp) and set `API_KEY_21ST` in
+whatever environment runs Claude Code against this repo (shell profile,
+Claude Code's environment-variable settings, or your CI secrets — never
+committed to git). Without it, the `21st` MCP server will fail to
+authenticate and the skill's tools (`search`, `get_component`, `generate`,
+`search_logo`, etc.) won't be available. Unrelated to the ZINARA JEWELRY
+theme.
